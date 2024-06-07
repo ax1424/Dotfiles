@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=open-menu
+GenericName=open-menu
+Comment=Open the openbox menu
+Exec=xdotool click 3
+Terminal=false
+Type=Application
+StartupNotify=true
+MimeType=text/plain;
+Icon=debian-swirl.svg
