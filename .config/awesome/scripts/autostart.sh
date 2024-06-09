@@ -2,7 +2,7 @@
 
 ### AUTOSTART PROGRAMS ###
 flameshot & #screenshot tool
-#lxsession & #session manager
+lxsession & #session manager
 nitrogen --restore & #restore the last wallpaper
 #nitrogen --set-zoom-fill --random ~/wallpapers & #randomly set a wallpaper
 nm-applet &
