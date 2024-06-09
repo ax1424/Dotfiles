@@ -155,6 +155,13 @@ vicious.register(mem_widget, vicious.widgets.mem, function(widget, args)
     return string.format("🖥️:%.2fGB used", used)
 end, 13)
 
+-- Add a click event to the memory widget
+mem_widget:connect_signal("button::press", function(_, _, _, button)
+    if button == 1 then -- Left mouse button
+        awful.spawn("kitty -e htop")
+    end
+end)
+
 --Clock widget
 mytextclock = wibox.widget.textclock("📅:%a, %b %d - %I:%M %p")
 
@@ -194,6 +201,23 @@ gears.timer {
     autostart = true,
     callback  = function() update_check(update_widget) end
 }
+
+-- Add a click event to the widget
+update_widget:connect_signal("button::press", function(_, _, _, button)
+    if button == 1 then -- Left mouse button
+        awful.spawn.easy_async_with_shell("/home/aston/.config/awesome/sys_update.sh", function(stdout, stderr, exitreason, exitcode)
+            -- Handle completion or errors if needed
+            if exitcode == 0 then
+                -- Update succeeded
+                naughty.notify({title = "System Update", text = "Update completed successfully", timeout = 5})
+            else
+                -- Update failed
+                naughty.notify({title = "System Update", text = "Update failed", timeout = 5})
+            end
+        end)
+    end
+end)
+
 
 -- Volume Widget
 local volume_widget = wibox.widget.textbox()
