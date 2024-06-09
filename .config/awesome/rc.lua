@@ -133,7 +133,7 @@ local keyboard_widget_with_icon = wibox.widget {
 
  -- WiFi Widget
     local wifi_widget = wibox.widget.textbox()
-    local interface = "wlp4s0" -- Replace with your network interface name
+    local interface = "wlan0" -- Replace with your network interface name
     vicious.register(wifi_widget, vicious.widgets.net, 
         function (widget, args)
             return string.format("📡 %s ↓↑ %s", args["{" .. interface .. " down_kb}"], args["{" .. interface .. " up_kb}"])
@@ -308,7 +308,7 @@ awful.screen.connect_for_each_screen(function(s)
 	--local names={"1:web", "2:dev", "3:sys", "4:doc", "5:vbox", "6:mus", "7:vid", "8:gfx"}
 	--local names={"WEB", "DEV", "SYS", "DOC", "VBOX", "MUS", "VID", "GFX"}
 	local l = awful.layout.suit
-	local layouts = {l.tile,l.tile,l.max,l.max.fullscreen,l.tile,l.tile,l.tile,l.tile} --Set a Layout for each Tag
+	local layouts = {l.tile,l.tile,l.tile,l.max.fullscreen,l.tile,l.tile,l.tile,l.tile} --Set a Layout for each Tag
 	awful.tag(names,s,layouts)
 
     -- Create a promptbox for each screen
@@ -524,7 +524,7 @@ globalkeys = gears.table.join(
 		
     -- Floorp
     awful.key({ modkey },            "w",     function () 
-    awful.util.spawn("flatpak run one.ablaze.floorp") end,
+    awful.util.spawn("floorp") end,
               {description = "web browser", group = "internet"}),
               
     -- Thunar
@@ -547,9 +547,9 @@ globalkeys = gears.table.join(
     awful.util.spawn("pavucontrol") end,
               {description = "volume control", group = "audio"}),
               
-    -- Lollypop
-    awful.key({ modkey, "Shift" },            "b",     function () 
-    awful.util.spawn("lollypop") end,
+    -- Deadbeef
+    awful.key({ modkey,  },            "d",     function () 
+    awful.util.spawn("deadbeef") end,
               {description = "music player", group = "audio"}),
               
     -- Thunderbird Email Client 
@@ -559,7 +559,7 @@ globalkeys = gears.table.join(
               
     -- OnlyOffice
     awful.key({ modkey, },            "o",     function () 
-    awful.util.spawn("flatpak run org.onlyoffice.desktopeditors") end,
+    awful.util.spawn("onlyoffice-desktopeditors") end,
               {description = "office suite", group = "office"}), 
 
 
@@ -725,7 +725,7 @@ awful.rules.rules = {
        properties = { screen = 1, tag = "5" } },
        
     -- Set Lollypop to always spawn on tag "6" on screen 1.
-     { rule = { class = "Lollypop" },
+     { rule = { class = "Deadbeef" },
        properties = { screen = 1, tag = "6" } },
 
 }
