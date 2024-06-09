@@ -152,7 +152,7 @@ vicious.register(mycpu, vicious.widgets.cpu, "⚙️:$1%", 3)
 local mem_widget = wibox.widget.textbox()
 vicious.register(mem_widget, vicious.widgets.mem, function(widget, args)
     local used = args[2]  / 1024
-    return string.format("🖥:%.2fGB used", used)
+    return string.format("🖥️:%.2fGB used", used)
 end, 13)
 
 --Clock widget
