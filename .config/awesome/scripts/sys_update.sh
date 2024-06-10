@@ -1,1 +1,1 @@
-kitty -e sudo pacman -Syyu
+kitty -e sudo paru

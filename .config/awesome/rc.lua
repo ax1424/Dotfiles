@@ -107,6 +107,15 @@ end
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
+local awesome_icon = wibox.widget.imagebox("/home/aston/.config/awesome/awesome_icon.png")
+
+-- Add a click event to the icon
+awesome_icon:connect_signal("button::press", function(_, _, _, button)
+    if button == 1 then -- Left mouse button
+        awful.spawn("kitty -e cmatrix") 
+    end
+end)
+
 -- Widgets on the panel
 
 -- Keyboard map indicator and switcher
@@ -146,6 +155,13 @@ vicious.register(mybattery, vicious.widgets.bat, "🔋:$2%", 61, "BAT0")
 -- CPU Widget
 mycpu = wibox.widget.textbox()
 vicious.register(mycpu, vicious.widgets.cpu, "⚙️:$1%", 3)
+
+-- Add a click event to the icon
+mycpu:connect_signal("button::press", function(_, _, _, button)
+    if button == 1 then -- Left mouse button
+        awful.spawn("kitty -e htop") 
+    end
+end)
 
 
 -- Memory widget to show used memory and percentage
@@ -205,7 +221,7 @@ gears.timer {
 -- Add a click event to the widget
 update_widget:connect_signal("button::press", function(_, _, _, button)
     if button == 1 then -- Left mouse button
-        awful.spawn.easy_async_with_shell("/home/aston/.config/awesome/sys_update.sh", function(stdout, stderr, exitreason, exitcode)
+        awful.spawn.easy_async_with_shell("/home/aston/.config/awesome/scripts/sys_update.sh", function(stdout, stderr, exitreason, exitcode)
             -- Handle completion or errors if needed
             if exitcode == 0 then
                 -- Update succeeded
@@ -407,6 +423,7 @@ mytasklist = awful.widget.tasklist {
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
+            awesome_icon,
             s.mytaglist,
             s.mylayoutbox,
             s.mypromptbox,
@@ -785,4 +802,4 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 
 -- Autostart script (wallpaper, compositor, etc.)
-awful.spawn.with_shell("~/.config/awesome/autostart.sh")
+awful.spawn.with_shell("~/.config/awesome/scripts/autostart.sh")
