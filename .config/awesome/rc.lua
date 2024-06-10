@@ -239,6 +239,13 @@ end)
 local volume_widget = wibox.widget.textbox()
 vicious.register(volume_widget, vicious.widgets.volume, "🔊:$1%", 2, "Master")
 
+-- Add a click event to the memory widget
+volume_widget:connect_signal("button::press", function(_, _, _, button)
+    if button == 1 then -- Left mouse button
+        awful.spawn("pavucontrol")
+    end
+end)
+
 local systray = wibox.widget.systray()
 systray.base_size = 28
 
