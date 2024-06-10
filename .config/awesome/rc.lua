@@ -112,7 +112,7 @@ local awesome_icon = wibox.widget.imagebox("/home/aston/.config/awesome/awesome_
 -- Add a click event to the icon
 awesome_icon:connect_signal("button::press", function(_, _, _, button)
     if button == 1 then -- Left mouse button
-        awful.spawn("kitty -e cmatrix") 
+        awful.spawn("kitty") 
     end
 end)
 
