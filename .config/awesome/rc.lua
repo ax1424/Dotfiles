@@ -107,7 +107,7 @@ end
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
-local awesome_icon = wibox.widget.imagebox("/home/aston/.config/awesome/awesome_icon.png")
+local awesome_icon = wibox.widget.imagebox("/home/aston/.config/awesome/icons/awesome_icon.png")
 
 -- Add a click event to the icon
 awesome_icon:connect_signal("button::press", function(_, _, _, button)
@@ -355,7 +355,7 @@ awful.screen.connect_for_each_screen(function(s)
 	--local names={"1:web", "2:dev", "3:sys", "4:doc", "5:vbox", "6:mus", "7:vid", "8:gfx"}
 	--local names={"WEB", "DEV", "SYS", "DOC", "VBOX", "MUS", "VID", "GFX"}
 	local l = awful.layout.suit
-	local layouts = {l.tile,l.tile,l.tile,l.max.fullscreen,l.tile,l.tile,l.tile,l.tile} --Set a Layout for each Tag
+	local layouts = {l.tile,l.tile,l.tile,l.max,l.tile,l.tile,l.tile,l.tile} --Set a Layout for each Tag
 	awful.tag(names,s,layouts)
 
     -- Create a promptbox for each screen
