@@ -167,8 +167,8 @@ end)
 -- Memory widget to show used memory and percentage
 local mem_widget = wibox.widget.textbox()
 vicious.register(mem_widget, vicious.widgets.mem, function(widget, args)
-    local used = args[2]  / 1024
-    return string.format("🖥️:%.2fGB used", used)
+    local used = args[2]  
+    return string.format("🖥️:%.2f MB", used)
 end, 13)
 
 -- Add a click event to the memory widget
@@ -745,7 +745,7 @@ awful.rules.rules = {
 
         name = {
           },
-        role = {
+        role = { 
           "AlarmWindow",  -- Thunderbird's calendar.
           }
       }, properties = { floating = true }},
