@@ -73,7 +73,7 @@ awesome.connect_signal("startup_done", restore_tag)
 -- Import The Theme
 beautiful.init("~/.config/awesome/theme.lua")
 
-local terminal = "kitty"
+local terminal = "alacritty"
 editor = os.getenv("geany") or "nvim"
 editor_cmd = terminal .. " -e " .. editor
 local modkey = "Mod4"
@@ -112,7 +112,7 @@ local awesome_icon = wibox.widget.imagebox("/home/aston/.config/awesome/icons/aw
 -- Add a click event to the icon
 awesome_icon:connect_signal("button::press", function(_, _, _, button)
     if button == 1 then -- Left mouse button
-        awful.spawn("kitty") 
+        awful.spawn("alacritty") 
     end
 end)
 
@@ -159,7 +159,7 @@ vicious.register(mycpu, vicious.widgets.cpu, "⚙️:$1%", 3)
 -- Add a click event to the icon
 mycpu:connect_signal("button::press", function(_, _, _, button)
     if button == 1 then -- Left mouse button
-        awful.spawn("kitty -e htop") 
+        awful.spawn("alacritty -e htop") 
     end
 end)
 
@@ -174,7 +174,7 @@ end, 13)
 -- Add a click event to the memory widget
 mem_widget:connect_signal("button::press", function(_, _, _, button)
     if button == 1 then -- Left mouse button
-        awful.spawn("kitty -e htop")
+        awful.spawn("alacritty -e htop")
     end
 end)
 
