@@ -118,28 +118,6 @@ end)
 
 -- Widgets on the panel
 
--- Keyboard map indicator and switcher
-mykeyboardlayout = awful.widget.keyboardlayout()
-local keyboard_icon = "⌨️"
-
--- Custom widget to include the icon
-local keyboard_widget_with_icon = wibox.widget {
-    {
-        {
-            markup = keyboard_icon,
-            widget = wibox.widget.textbox,
-        },
-        {
-            mykeyboardlayout,
-            widget = wibox.container.margin,
-            left = 0,  -- Add some spacing between icon and text
-        },
-        layout = wibox.layout.fixed.horizontal,
-    },
-    widget = wibox.container.margin,
-    left = 5,  -- Optional: add some padding on the left
-}
-
  -- WiFi Widget
     local wifi_widget = wibox.widget.textbox()
     local interface = "wlan0" -- Replace with your network interface name
@@ -207,9 +185,9 @@ local function update_package_widget()
     package_widget:set_count(get_package_count())
 end
 
--- Timer to update the widget every hour
+-- Timer to update the widget 24 hours
 gears.timer {
-    timeout = 3600,
+    timeout = 86400,
     autostart = true,
     callback = update_package_widget
 }
@@ -302,7 +280,6 @@ local function create_widget(widget, color)
 end
 
 -- Create widgets with alternating colors
-keyboard_widget_with_icon = create_widget(keyboard_widget_with_icon, colors[1])
 mytextclock = create_widget(mytextclock, colors[2])
 mybattery = create_widget(mybattery, colors[2])
 wifi_widget = create_widget(wifi_widget, colors[1])
@@ -314,7 +291,6 @@ myuptime = create_widget(myuptime, colors[2], true)
 volume_widget = create_widget(volume_widget, colors[1])
 
 --Widget Spacing
-keyboard_widget_with_icon = wibox.container.margin(keyboard_widget_with_icon, spacing, spacing)
 mybattery = wibox.container.margin(mybattery, spacing, spacing)
 wifi_widget = wibox.container.margin(wifi_widget, spacing, spacing)
 mycpu = wibox.container.margin(mycpu, spacing, spacing)
@@ -475,7 +451,6 @@ mytasklist = awful.widget.tasklist {
         mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            keyboard_widget_with_icon,
             kernel_widget,
             mybattery,
             wifi_widget,
