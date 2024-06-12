@@ -123,7 +123,7 @@ end)
     local interface = "wlan0" -- Replace with your network interface name
     vicious.register(wifi_widget, vicious.widgets.net, 
         function (widget, args)
-            return string.format("📡 %s ↓↑ %s", args["{" .. interface .. " down_kb}"], args["{" .. interface .. " up_kb}"])
+            return string.format("📡:%s ↓↑ %s", args["{" .. interface .. " down_kb}"], args["{" .. interface .. " up_kb}"])
         end, 2)
     
 -- Battery widget
