@@ -181,6 +181,42 @@ end)
 --Clock widget
 mytextclock = wibox.widget.textclock("📅:%a, %b %d - %I:%M %p")
 
+-- Function to get the total number of installed packages
+local function get_package_count()
+    local handle = io.popen("pacman -Q | wc -l")
+    local result = handle:read("*a")
+    handle:close()
+    return tonumber(result)
+end
+
+-- Create a widget to display the package count
+local package_widget = wibox.widget {
+    {
+        id = "txt",
+        widget = wibox.widget.textbox,
+        font = "MononokiNerdFont Mono 12"
+    },
+    layout = wibox.container.margin,
+    set_count = function(self, count)
+        self:get_children_by_id("txt")[1].text = "📦:" .. count
+    end
+}
+
+-- Update the widget periodically
+local function update_package_widget()
+    package_widget:set_count(get_package_count())
+end
+
+-- Timer to update the widget every hour
+gears.timer {
+    timeout = 3600,
+    autostart = true,
+    callback = update_package_widget
+}
+
+-- Initial update
+update_package_widget()
+
 -- Uptime widget to show only the most significant unit
 local uptime_icon = wibox.widget.textbox("⏳")
 local uptime_widget = wibox.widget.textbox()
@@ -266,12 +302,13 @@ local function create_widget(widget, color)
 end
 
 -- Create widgets with alternating colors
-keyboard_widget_with_icon = create_widget(keyboard_widget_with_icon, colors[2])
+keyboard_widget_with_icon = create_widget(keyboard_widget_with_icon, colors[1])
 mytextclock = create_widget(mytextclock, colors[2])
-mybattery = create_widget(mybattery, colors[1])
-wifi_widget = create_widget(wifi_widget, colors[2])
-mycpu = create_widget(mycpu, colors[1])
-mem_widget = create_widget(mem_widget, colors[2])
+mybattery = create_widget(mybattery, colors[2])
+wifi_widget = create_widget(wifi_widget, colors[1])
+mycpu = create_widget(mycpu, colors[2])
+mem_widget = create_widget(mem_widget, colors[1])
+package_widget = create_widget(package_widget, colors[2])
 update_widget = create_widget(update_widget, colors[1])
 myuptime = create_widget(myuptime, colors[2], true)
 volume_widget = create_widget(volume_widget, colors[1])
@@ -282,6 +319,7 @@ mybattery = wibox.container.margin(mybattery, spacing, spacing)
 wifi_widget = wibox.container.margin(wifi_widget, spacing, spacing)
 mycpu = wibox.container.margin(mycpu, spacing, spacing)
 mem_widget = wibox.container.margin(mem_widget, spacing, spacing)
+package_widget = wibox.container.margin(package_widget, spacing, spacing)
 update_widget = wibox.container.margin(update_widget, spacing, spacing)
 myuptime = wibox.container.margin(myuptime, spacing, spacing)
 mytextclock = wibox.container.margin(mytextclock, spacing, spacing)
@@ -352,7 +390,6 @@ awful.screen.connect_for_each_screen(function(s)
 	-- Improved Tags
 	local names={"1", "2", "3", "4", "5", "6", "7", "8"}
 	--local names={"", "", "", "", "", "", "", ""}
-	--local names={"1:web", "2:dev", "3:sys", "4:doc", "5:vbox", "6:mus", "7:vid", "8:gfx"}
 	--local names={"WEB", "DEV", "SYS", "DOC", "VBOX", "MUS", "VID", "GFX"}
 	local l = awful.layout.suit
 	local layouts = {l.tile,l.tile,l.tile,l.max,l.tile,l.tile,l.tile,l.tile} --Set a Layout for each Tag
@@ -439,10 +476,12 @@ mytasklist = awful.widget.tasklist {
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             keyboard_widget_with_icon,
+            kernel_widget,
             mybattery,
             wifi_widget,
             mycpu,
             mem_widget,
+            package_widget,
             update_widget,
             myuptime,
             volume_widget,
@@ -745,7 +784,7 @@ awful.rules.rules = {
 
         name = {
           },
-        role = { 
+        role = {
           "AlarmWindow",  -- Thunderbird's calendar.
           }
       }, properties = { floating = true }},
