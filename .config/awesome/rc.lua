@@ -141,12 +141,12 @@ mycpu:connect_signal("button::press", function(_, _, _, button)
     end
 end)
 
-
--- Memory widget to show used memory and percentage
+-- Memory widget to show used memory in MB and percentage without decimals
 local mem_widget = wibox.widget.textbox()
 vicious.register(mem_widget, vicious.widgets.mem, function(widget, args)
-    local used = args[2]  
-    return string.format("🖥️:%.2f MB", used)
+    local used = args[2]  -- Used memory in MB
+    local percent = args[1]  -- Percentage of used memory
+    return string.format("🖥️:%.0f MB (%.0f%%)", used, percent)
 end, 13)
 
 -- Add a click event to the memory widget
@@ -253,7 +253,7 @@ end)
 local volume_widget = wibox.widget.textbox()
 vicious.register(volume_widget, vicious.widgets.volume, "🔊:$1%", 2, "Master")
 
--- Add a click event to the memory widget
+-- Add a click event to the volume widget
 volume_widget:connect_signal("button::press", function(_, _, _, button)
     if button == 1 then -- Left mouse button
         awful.spawn("pavucontrol")
