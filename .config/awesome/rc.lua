@@ -268,7 +268,7 @@ local systray_centered = wibox.container.place(systray)
 systray_centered.valign = "center"
 
 -- Define the colors
-local colors = { "#FF79C6", "#9676C5" }
+local colors = { "#003C8C", "#6D4A9C" }
 local spacing = 2
 
 -- Function to create a widget with a background and margin
@@ -437,7 +437,6 @@ mytasklist = awful.widget.tasklist {
     },
 }
 
-
     -- Add widgets to the wibox
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
@@ -451,7 +450,6 @@ mytasklist = awful.widget.tasklist {
         mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            kernel_widget,
             mybattery,
             wifi_widget,
             mycpu,

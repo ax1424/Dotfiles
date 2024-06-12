@@ -10,7 +10,7 @@ local theme = {}
 theme.font          = "MononokiNerdFont Mono 12"
 
 theme.bg_normal     = "#282a36"
-theme.bg_focus      = "#9676C5"
+theme.bg_focus      = "#6D4A9C"
 theme.bg_urgent     = "#FF79C6"
 theme.bg_minimize   = "#282a36"
 theme.bg_systray    = theme.bg_normal
@@ -20,7 +20,7 @@ theme.fg_focus      = "#FFFFFF"
 theme.fg_urgent     = "#ffffff"
 theme.fg_minimize   = "#ffffff"
 theme.taglist_focus                             = "#FFFFFF"
-theme.taglist_bg_focus                          = "#9676C5"
+theme.taglist_bg_focus                          = "#6D4A9C"
 theme.taglist_bg_normal                         = "#282a36"
 theme.mytasklist_focus							= "#FFFFFF"
 theme.mytasklist_bg_focus						= "#9676C5"
@@ -29,7 +29,7 @@ theme.mytasklist_bg_normal						= "#282a36"
 theme.useless_gap   = dpi(4)
 theme.border_width  = dpi(2)
 theme.border_normal = "#282a36"
-theme.border_focus  = "#9676C5"
+theme.border_focus  = "#6D4A9C"
 theme.border_marked = "#91231c"
 
 theme.hotkeys_modifiers_fg = "#FFFFFF"
