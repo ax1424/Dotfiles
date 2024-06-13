@@ -10,8 +10,8 @@
     border-color:               #282c34;
     text-color:                 #bbc2cf;
     height:                     33px;
-    font:                       "Mononoki Nerd Font Mono 16";
-    prompt-font:                "Mononoki Nerd Font Mono 16";
+    font:                       "Ubuntu Mono 13";
+    prompt-font:                "Ubuntu Mono 15";
     prompt-background:          #51afef;
     prompt-foreground:          #282c34;
     prompt-padding:             2px;

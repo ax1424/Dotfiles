@@ -1,1 +1,1 @@
-kitty -e sudo paru
+alacritty -e sudo paru

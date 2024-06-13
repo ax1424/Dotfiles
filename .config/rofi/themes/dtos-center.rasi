@@ -9,8 +9,8 @@
     background-color:            #282c34;
     border-color:                #51afef;
     text-color:                  #bbc2cf;
-    font:                        "Mononoki Nerd Font 13";
-    prompt-font:                 "Mononoki Nerd Font Bold 13";
+    font:                        "Ubuntu Mono Font 13";
+    prompt-font:                 "Ubuntu Mono Bold 15";
     prompt-background:           #51afef;
     prompt-foreground:           #282c34;
     prompt-padding:              4px;
