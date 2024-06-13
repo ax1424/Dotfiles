@@ -438,6 +438,19 @@ mytasklist = awful.widget.tasklist {
     },
 }
 
+		-- Load required libraries
+	local wibox = require("wibox")
+	local awful = require("awful")
+	local beautiful = require("beautiful")
+	
+	-- Create a separator widget
+	local separator = wibox.widget {
+    widget = wibox.widget.textbox,
+    text = '|',
+    align = 'center',
+    valign = 'center',
+}
+
     -- Add widgets to the wibox
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
@@ -445,7 +458,9 @@ mytasklist = awful.widget.tasklist {
             layout = wibox.layout.fixed.horizontal,
             awesome_icon,
             s.mytaglist,
+            separator,
             s.mylayoutbox,
+            separator,
             s.mypromptbox,
         },
         mytasklist, -- Middle widget
