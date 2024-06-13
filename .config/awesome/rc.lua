@@ -267,6 +267,7 @@ systray.base_size = 28
 local systray_centered = wibox.container.place(systray)
 systray_centered.valign = "center"
 
+
 -- Define the colors
 local colors = { "#003C8C", "#6D4A9C" }
 local spacing = 2
@@ -622,6 +623,27 @@ globalkeys = gears.table.join(
     awful.util.spawn("onlyoffice-desktopeditors") end,
               {description = "office suite", group = "office"}), 
 
+	-- Brightness control
+	awful.key({ }, "XF86MonBrightnessUp", function ()
+    awful.spawn("brightnessctl set +10%") -- Increase brightness by 10%
+	end, {description = "increase brightness", group = "screen"}),
+
+	awful.key({ }, "XF86MonBrightnessDown", function ()
+    awful.spawn("brightnessctl set 10%-") -- Decrease brightness by 10%
+	end, {description = "decrease brightness", group = "screen"}),
+	
+	-- Volume control
+	awful.key({modkey, },    "F3", 			 function ()
+    awful.spawn("amixer set Master 5%+")
+	end, {description = "increase volume", group = "audio"}),
+
+	awful.key({modkey, }, "F2", function ()
+    awful.spawn("amixer set Master 5%-")
+	end, {description = "decrease volume", group = "audio"}),
+
+	awful.key({modkey, }, "F4", function ()
+    awful.spawn("amixer set Master toggle")
+	end, {description = "mute volume", group = "audio"}),
 
     -- Menubar
     awful.key({ modkey, "Shift" }, "p", function() menubar.show() end,
