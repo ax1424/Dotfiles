@@ -11,7 +11,7 @@ theme.font          = "MononokiNerdFont Mono 12"
 
 theme.bg_normal     = "#282a36"
 theme.bg_focus      = "#282a36"
-theme.bg_urgent     = "#FF79C6"
+theme.bg_urgent     = "#46d9ff"
 theme.bg_minimize   = "#282a36"
 theme.bg_systray    = theme.bg_normal
 
@@ -20,7 +20,7 @@ theme.fg_focus      = "#46d9ff"
 theme.fg_urgent     = "#ffffff"
 theme.fg_minimize   = "#ffffff"
 theme.taglist_focus                             = "#FFFFFF"
-theme.taglist_bg_focus                          = "#6D4A9C"
+theme.taglist_bg_focus                          = "#1c1f24"
 theme.taglist_bg_normal                         = "#282a36"
 theme.mytasklist_focus							= "#FFFFFF"
 theme.mytasklist_bg_focus						= "#9676C5"
