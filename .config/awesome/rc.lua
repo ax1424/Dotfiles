@@ -134,13 +134,6 @@ vicious.register(mybattery, vicious.widgets.bat, "🔋:$2%", 61, "BAT0")
 mycpu = wibox.widget.textbox()
 vicious.register(mycpu, vicious.widgets.cpu, "⚙️:$1%", 3)
 
--- Add a click event to the icon
-mycpu:connect_signal("button::press", function(_, _, _, button)
-    if button == 1 then -- Left mouse button
-        awful.spawn("alacritty -e htop") 
-    end
-end)
-
 -- Memory widget to show used memory in MB and percentage without decimals
 local mem_widget = wibox.widget.textbox()
 vicious.register(mem_widget, vicious.widgets.mem, function(widget, args)
@@ -438,11 +431,6 @@ mytasklist = awful.widget.tasklist {
     },
 }
 
-		-- Load required libraries
-	local wibox = require("wibox")
-	local awful = require("awful")
-	local beautiful = require("beautiful")
-	
 	-- Create a separator widget
 	local separator = wibox.widget {
     widget = wibox.widget.textbox,
@@ -466,6 +454,7 @@ mytasklist = awful.widget.tasklist {
         mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
+            wibox.widget.systray(),
             mybattery,
             wifi_widget,
             mycpu,
@@ -474,8 +463,7 @@ mytasklist = awful.widget.tasklist {
             update_widget,
             myuptime,
             volume_widget,
-            mytextclock,
-            wibox.widget.systray(),
+            mytextclock,       
             --table.unpack(mywidgets),
         },
     }
@@ -639,26 +627,26 @@ globalkeys = gears.table.join(
               {description = "office suite", group = "office"}), 
 
 	-- Brightness control
-	awful.key({ }, "XF86MonBrightnessUp", function ()
-    awful.spawn("brightnessctl set +10%") -- Increase brightness by 10%
-	end, {description = "increase brightness", group = "screen"}),
+	awful.key({ }, 			"XF86MonBrightnessUp", 		function ()
+    awful.util.spawn("brightnessctl set +10%") end, -- Increase brightness by 10%
+			{description = "increase brightness", group = "screen"}),
 
-	awful.key({ }, "XF86MonBrightnessDown", function ()
-    awful.spawn("brightnessctl set 10%-") -- Decrease brightness by 10%
-	end, {description = "decrease brightness", group = "screen"}),
+	awful.key({ }, 			"XF86MonBrightnessDown", 	function ()
+    awful.util.spawn("brightnessctl set 10%-") end, -- Decrease brightness by 10%
+     {description = "decrease brightness", group = "screen"}),
 	
 	-- Volume control
 	awful.key({modkey, },    "F3", 			 function ()
-    awful.spawn("amixer set Master 5%+")
-	end, {description = "increase volume", group = "audio"}),
+    awful.util.spawn("amixer set Master 5%+") end,
+			{description = "increase volume", group = "audio"}),
 
-	awful.key({modkey, }, "F2", function ()
-    awful.spawn("amixer set Master 5%-")
-	end, {description = "decrease volume", group = "audio"}),
+	awful.key({modkey, },	 "F2", 		function ()
+    awful.util.spawn("amixer set Master 5%-") end, 
+			{description = "decrease volume", group = "audio"}),
 
-	awful.key({modkey, }, "F4", function ()
-    awful.spawn("amixer set Master toggle")
-	end, {description = "mute volume", group = "audio"}),
+	awful.key({modkey, }, 	 "F4",		 function ()
+    awful.util.spawn("amixer set Master toggle") end,
+			 {description = "mute volume", group = "audio"}),
 
     -- Menubar
     awful.key({ modkey, "Shift" }, "p", function() menubar.show() end,
