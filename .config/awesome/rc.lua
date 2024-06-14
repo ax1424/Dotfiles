@@ -1,11 +1,25 @@
+local awesome, client, mouse, screen, tag = awesome, client, mouse, screen, tag
+local ipairs, string, os, table, tostring, tonumber, type = ipairs, string, os, table, tostring, tonumber, type
+
+-- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
 require("awful.autofocus")
+
+-- Widget and layout library
 local wibox = require("wibox")
-local beautiful = require("beautiful")
-local naughty = require("naughty")
-local menubar = require("menubar")
 local vicious = require("vicious") 
+
+-- Theme handling library
+local beautiful = require("beautiful")
+
+-- Notification library
+local naughty = require("naughty")
+naughty.config.defaults['icon_size'] = 100
+local lain          = require("lain")
+local freedesktop   = require("freedesktop")
+
+-- Hotkey Menu
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 require("awful.hotkeys_popup.keys")
 
@@ -15,6 +29,7 @@ if awesome.startup_errors then
                      text = awesome.startup_errors })
 end
 
+-- Handle runtime errors after startup
 do
     local in_error = false
     awesome.connect_signal("debug::error", function (err)
@@ -43,10 +58,8 @@ end
         end
     end
 end
-
 -- Connect store_current_tag function to the awesome.quit signal
 awesome.connect_signal("exit", store_current_tag)
-
 -- Function to restore the tag
 local function restore_tag()
     -- Read the tag index from the file
@@ -65,20 +78,32 @@ local function restore_tag()
         end
     end
 end
-
 -- Call restore_tag function during startup
 awful.spawn.with_shell("sleep 0.1 && awesome-client 'awesome.emit_signal(\"startup_done\")'")
 awesome.connect_signal("startup_done", restore_tag)
 
 -- Import The Theme
 beautiful.init("~/.config/awesome/theme.lua")
+	
+-- Define a few variables
+local modkey      = "Mod4"
+local altkey      = "Mod1"
+local ctrlkey     = "Control"
+local terminal    = "alacritty"
+local browser     = "floorp"
+editor		      = os.getenv("EDITOR") or "geany"
+editor_cmd        = terminal .. " -e " .. editor
 
-local terminal = "alacritty"
-editor = os.getenv("geany") or "nvim"
-editor_cmd = terminal .. " -e " .. editor
-local modkey = "Mod4"
-local altkey = "Mod1"
 
+-- Tags
+	local names={"1", "2", "3", "4", "5", "6", "7", "8"}
+	--local names={"", "", "", "", "", "", "", ""}
+	--local names={"WEB", "DEV", "SYS", "DOC", "VBOX", "MUS", "VID", "GFX"}
+	local l = awful.layout.suit
+	local layouts = {l.tile,l.tile,l.tile,l.max,l.tile,l.tile,l.tile,l.tile} --Set a Layout for each Tag
+	awful.tag(names,s,layouts)
+	
+-- Define a few layouts
 awful.layout.layouts = {
     awful.layout.suit.tile,
     awful.layout.suit.max,
@@ -100,11 +125,6 @@ local function client_menu_toggle_fn()
         end
     end
 end
--- }}}
-
- 
--- Menubar configuration
-menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
 local awesome_icon = wibox.widget.imagebox("/home/aston/.config/awesome/icons/awesome_icon.png")
@@ -139,7 +159,7 @@ local mem_widget = wibox.widget.textbox()
 vicious.register(mem_widget, vicious.widgets.mem, function(widget, args)
     local used = args[2]  -- Used memory in MB
     local percent = args[1]  -- Percentage of used memory
-    return string.format("🖥️:%.0f MB (%.0f%%)", used, percent)
+    return string.format("🖥️:%.0fM (%.0f%%)", used, percent)
 end, 13)
 
 -- Add a click event to the memory widget
@@ -356,14 +376,6 @@ screen.connect_signal("property::geometry", set_wallpaper)
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
     set_wallpaper(s)
- 
-	-- Improved Tags
-	local names={"1", "2", "3", "4", "5", "6", "7", "8"}
-	--local names={"", "", "", "", "", "", "", ""}
-	--local names={"WEB", "DEV", "SYS", "DOC", "VBOX", "MUS", "VID", "GFX"}
-	local l = awful.layout.suit
-	local layouts = {l.tile,l.tile,l.tile,l.max,l.tile,l.tile,l.tile,l.tile} --Set a Layout for each Tag
-	awful.tag(names,s,layouts)
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -576,7 +588,7 @@ globalkeys = gears.table.join(
     awful.util.spawn("rofi -show ssh") end,
               {description = "run ssh", group = "launcher"}),  
               
-    -- SSH
+    -- Filebrowser
     awful.key({ modkey,  },            "r",     function () 
     awful.util.spawn("rofi -show filebrowser") end,
               {description = "browse files with rofi", group = "utilities"}),            
@@ -646,11 +658,7 @@ globalkeys = gears.table.join(
 
 	awful.key({modkey, }, 	 "F4",		 function ()
     awful.util.spawn("amixer set Master toggle") end,
-			 {description = "mute volume", group = "audio"}),
-
-    -- Menubar
-    awful.key({ modkey, "Shift" }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"})
+			 {description = "mute volume", group = "audio"})
 )
 
 clientkeys = gears.table.join(
