@@ -90,18 +90,14 @@ local modkey      = "Mod4"
 local altkey      = "Mod1"
 local ctrlkey     = "Control"
 local terminal    = "alacritty"
-local browser     = "floorp"
-editor		      = os.getenv("EDITOR") or "geany"
-editor_cmd        = terminal .. " -e " .. editor
-
 
 -- Tags
-	local names={"1", "2", "3", "4", "5", "6", "7", "8"}
-	--local names={"", "", "", "", "", "", "", ""}
-	--local names={"WEB", "DEV", "SYS", "DOC", "VBOX", "MUS", "VID", "GFX"}
-	local l = awful.layout.suit
-	local layouts = {l.tile,l.tile,l.tile,l.max,l.tile,l.tile,l.tile,l.tile} --Set a Layout for each Tag
-	awful.tag(names,s,layouts)
+local names={"1", "2", "3", "4", "5", "6", "7", "8"}
+--local names={"", "", "", "", "", "", "", ""}
+--local names={"WEB", "DEV", "SYS", "DOC", "VBOX", "MUS", "VID", "GFX"}
+local l = awful.layout.suit
+local layouts = {l.tile,l.tile,l.tile,l.max,l.tile,l.tile,l.tile,l.tile} --Set a Layout for each Tag
+awful.tag(names,s,layouts)
 	
 -- Define a few layouts
 awful.layout.layouts = {
@@ -127,42 +123,48 @@ local function client_menu_toggle_fn()
 end
 -- }}}
 
-local awesome_icon = wibox.widget.imagebox("/home/aston/.config/awesome/icons/awesome_icon.png")
 
--- Add a click event to the icon
+---WIDGETS---
+
+-- Create a separator widget
+local separator = wibox.widget {
+widget = wibox.widget.textbox,
+text = '|',
+align = 'center',
+valign = 'center',
+}
+
+local awesome_icon = wibox.widget.imagebox("/home/aston/.config/awesome/icons/awesome_icon.png")
 awesome_icon:connect_signal("button::press", function(_, _, _, button)
     if button == 1 then -- Left mouse button
         awful.spawn("alacritty") 
     end
 end)
 
--- Widgets on the panel
-
- -- WiFi Widget
-    local wifi_widget = wibox.widget.textbox()
-    local interface = "wlan0" -- Replace with your network interface name
-    vicious.register(wifi_widget, vicious.widgets.net, 
-        function (widget, args)
-            return string.format("📡:%s ↓↑ %s", args["{" .. interface .. " down_kb}"], args["{" .. interface .. " up_kb}"])
-        end, 2)
+ -- WiFi widget
+local wifi_widget = wibox.widget.textbox()
+local interface = "wlan0" -- Replace with your network interface name
+vicious.register(wifi_widget, vicious.widgets.net, 
+      function (widget, args)
+          return string.format("📡:%s ↓↑ %s", args["{" .. interface .. " down_kb}"],
+           args["{" .. interface .. " up_kb}"])
+      end, 2)
     
 -- Battery widget
 mybattery = wibox.widget.textbox()
 vicious.register(mybattery, vicious.widgets.bat, "🔋:$2%", 61, "BAT0")
 
--- CPU Widget
+-- CPU widget
 mycpu = wibox.widget.textbox()
 vicious.register(mycpu, vicious.widgets.cpu, "⚙️:$1%", 3)
 
--- Memory widget to show used memory in MB and percentage without decimals
+-- Memory widget 
 local mem_widget = wibox.widget.textbox()
 vicious.register(mem_widget, vicious.widgets.mem, function(widget, args)
     local used = args[2]  -- Used memory in MB
     local percent = args[1]  -- Percentage of used memory
     return string.format("🖥️:%.0fM (%.0f%%)", used, percent)
 end, 13)
-
--- Add a click event to the memory widget
 mem_widget:connect_signal("button::press", function(_, _, _, button)
     if button == 1 then -- Left mouse button
         awful.spawn("alacritty -e htop")
@@ -180,7 +182,7 @@ local function get_package_count()
     return tonumber(result)
 end
 
--- Create a widget to display the package count
+-- Package Count Widget
 local package_widget = wibox.widget {
     {
         id = "txt",
@@ -192,23 +194,17 @@ local package_widget = wibox.widget {
         self:get_children_by_id("txt")[1].text = "📦:" .. count
     end
 }
-
--- Update the widget periodically
 local function update_package_widget()
     package_widget:set_count(get_package_count())
 end
-
--- Timer to update the widget 24 hours
 gears.timer {
     timeout = 86400,
     autostart = true,
     callback = update_package_widget
 }
-
--- Initial update
 update_package_widget()
 
--- Uptime widget to show only the most significant unit
+-- Uptime widget t
 local uptime_icon = wibox.widget.textbox("⏳")
 local uptime_widget = wibox.widget.textbox()
 vicious.register(uptime_widget, vicious.widgets.uptime, function(widget, args)
@@ -220,13 +216,11 @@ vicious.register(uptime_widget, vicious.widgets.uptime, function(widget, args)
         return string.format(":%dm", args[3])
     end
 end, 61)
-
 local myuptime = wibox.widget {
     uptime_icon,
     uptime_widget,
     layout = wibox.layout.fixed.horizontal,
 }
-
 
 -- Update Widget
 local update_widget = wibox.widget.textbox()
@@ -236,7 +230,6 @@ local function update_check(widget)
         widget.text = "🔄: " .. updates
     end)
 end
-
 update_check(update_widget)
 gears.timer {
     timeout   = 86400,  -- Check for updates every 24 hours
@@ -244,8 +237,6 @@ gears.timer {
     autostart = true,
     callback  = function() update_check(update_widget) end
 }
-
--- Add a click event to the widget
 update_widget:connect_signal("button::press", function(_, _, _, button)
     if button == 1 then -- Left mouse button
         awful.spawn.easy_async_with_shell("/home/aston/.config/awesome/scripts/sys_update.sh", function(stdout, stderr, exitreason, exitcode)
@@ -265,8 +256,6 @@ end)
 -- Volume Widget
 local volume_widget = wibox.widget.textbox()
 vicious.register(volume_widget, vicious.widgets.volume, "🔊:$1%", 2, "Master")
-
--- Add a click event to the volume widget
 volume_widget:connect_signal("button::press", function(_, _, _, button)
     if button == 1 then -- Left mouse button
         awful.spawn("pavucontrol")
@@ -275,8 +264,6 @@ end)
 
 local systray = wibox.widget.systray()
 systray.base_size = 28
-
--- Center the systray vertically
 local systray_centered = wibox.container.place(systray)
 systray_centered.valign = "center"
 
@@ -443,15 +430,7 @@ mytasklist = awful.widget.tasklist {
     },
 }
 
-	-- Create a separator widget
-	local separator = wibox.widget {
-    widget = wibox.widget.textbox,
-    text = '|',
-    align = 'center',
-    valign = 'center',
-}
-
-    -- Add widgets to the wibox
+    -- Set up the wibox
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
@@ -571,91 +550,74 @@ globalkeys = gears.table.join(
               end,
               {description = "restore minimized", group = "client"}),
 
-	--Keybindings for regular apps
+	--- ESSENTIAL KEYBINDINGS ---
 	
     -- Rofi
     awful.key({ modkey, "Shift" },            "Return",     function () 
     awful.util.spawn("rofi -show drun") end,
               {description = "run rofi", group = "launcher"}),
-              
     -- Active Windows
     awful.key({ altkey },            "Tab",     function () 
     awful.util.spawn("rofi -show window") end,
               {description = "show active windows", group = "launcher"}),
-              
     -- SSH
     awful.key({ modkey, "Shift" },            "s",     function () 
     awful.util.spawn("rofi -show ssh") end,
               {description = "run ssh", group = "launcher"}),  
-              
     -- Filebrowser
     awful.key({ modkey,  },            "r",     function () 
     awful.util.spawn("rofi -show filebrowser") end,
-              {description = "browse files with rofi", group = "utilities"}),            
-              
+              {description = "browse files with rofi", group = "utilities"}),  
     -- Wallpaper Selector 
     awful.key({ modkey,  },            "b",     function () 
     awful.spawn.with_shell("~/ro-scripts/wallpaper.sh") end,
-              {description = "select a wallpaper with rofi", group = "launcher"}),         
-		
+              {description = "select a wallpaper with rofi", group = "launcher"}),
     -- Floorp
     awful.key({ modkey },            "w",     function () 
     awful.util.spawn("floorp") end,
               {description = "web browser", group = "internet"}),
-              
     -- Thunar
     awful.key({ modkey, "Shift" },            "f",     function () 
     awful.util.spawn("thunar") end,
               {description = "thunar", group = "utilities"}),
-              
     -- Geany
     awful.key({ modkey },            "g",     function () 
     awful.util.spawn("geany") end,
               {description = "geany", group = "development"}),
-                                  
 	-- Virt-Manager
     awful.key({ modkey, "Shift" },            "v",     function () 
     awful.util.spawn("virt-manager") end,
-              {description = "virt-manager", group = "utilities"}),                    	     
-          
+              {description = "virt-manager", group = "utilities"}),                    	          
     -- Pavucontrol
     awful.key({ modkey, },            "v",     function () 
     awful.util.spawn("pavucontrol") end,
               {description = "volume control", group = "audio"}),
-              
     -- Deadbeef
     awful.key({ modkey,  },            "d",     function () 
     awful.util.spawn("deadbeef") end,
               {description = "music player", group = "audio"}),
-              
     -- Thunderbird Email Client 
     awful.key({ modkey, },            "t",     function () 
     awful.util.spawn("thunderbird") end,
               {description = "email client", group = "mail"}), 
-              
     -- OnlyOffice
     awful.key({ modkey, },            "o",     function () 
     awful.util.spawn("onlyoffice-desktopeditors") end,
               {description = "office suite", group = "office"}), 
-
 	-- Brightness control
 	awful.key({ }, 			"XF86MonBrightnessUp", 		function ()
     awful.util.spawn("brightnessctl set +10%") end, -- Increase brightness by 10%
 			{description = "increase brightness", group = "screen"}),
-
 	awful.key({ }, 			"XF86MonBrightnessDown", 	function ()
     awful.util.spawn("brightnessctl set 10%-") end, -- Decrease brightness by 10%
      {description = "decrease brightness", group = "screen"}),
-	
 	-- Volume control
 	awful.key({modkey, },    "F3", 			 function ()
     awful.util.spawn("amixer set Master 5%+") end,
 			{description = "increase volume", group = "audio"}),
-
 	awful.key({modkey, },	 "F2", 		function ()
     awful.util.spawn("amixer set Master 5%-") end, 
 			{description = "decrease volume", group = "audio"}),
-
 	awful.key({modkey, }, 	 "F4",		 function ()
     awful.util.spawn("amixer set Master toggle") end,
 			 {description = "mute volume", group = "audio"})
@@ -795,28 +757,23 @@ awful.rules.rules = {
           }
       }, properties = { floating = true }},
       
-      -- Set Apps to Spawn in Specific Workspaces 
+      -- Set Apps to Spawn on Specific Workspaces 
 
     -- Set Floorp to always spawn on tag "1" on screen 1.
      { rule = { class = "floorp" },
        properties = { screen = 1, tag = "1" } },
-       
     -- Set Geany to always spawn on tag "2" on screen 1.
      { rule = { class = "Geany" },
        properties = { screen = 1, tag = "2" } },
-       
     -- Set Thunderbird to always spawn on tag "3" on screen 1.
      { rule = { class = "thunderbird" },
        properties = { screen = 1, tag = "3" } },
-       
     -- Set OnlyOffice to always spawn on tag "4" on screen 1.
      { rule = { class = "ONLYOFFICE" },
        properties = { screen = 1, tag = "4" } },
-
     -- Set Virt-Manager to always spawn on tag "5" on screen 1.
      { rule = { class = "Virt-manager" },
        properties = { screen = 1, tag = "5" } },
-       
     -- Set Lollypop to always spawn on tag "6" on screen 1.
      { rule = { class = "Deadbeef" },
        properties = { screen = 1, tag = "6" } },
