@@ -154,6 +154,19 @@ vicious.register(wifi_widget, vicious.widgets.net,
 mybattery = wibox.widget.textbox()
 vicious.register(mybattery, vicious.widgets.bat, "🔋:$2%", 61, "BAT0")
 
+-- Kernel widget
+local kernel_icon = wibox.widget.textbox("🐧 ")
+local kernel_widget = wibox.widget.textbox()
+vicious.register(kernel_widget, vicious.widgets.os, function(widget, args)
+    local kernel_version = io.popen("uname -r"):read("*l")
+    return kernel_version
+end, 3600)  
+local mykernel = wibox.widget {
+    kernel_icon,
+    kernel_widget,
+    layout = wibox.layout.fixed.horizontal,
+}
+
 -- CPU widget
 mycpu = wibox.widget.textbox()
 vicious.register(mycpu, vicious.widgets.cpu, "⚙️:$1%", 3)
@@ -174,47 +187,25 @@ end)
 --Clock widget
 mytextclock = wibox.widget.textclock("📅:%a, %b %d - %I:%M %p")
 
--- Function to get the total number of installed packages
-local function get_package_count()
-    local handle = io.popen("pacman -Q | wc -l")
-    local result = handle:read("*a")
-    handle:close()
-    return tonumber(result)
-end
-
--- Package Count Widget
-local package_widget = wibox.widget {
-    {
-        id = "txt",
-        widget = wibox.widget.textbox,
-        font = "MononokiNerdFont Mono 12"
-    },
-    layout = wibox.container.margin,
-    set_count = function(self, count)
-        self:get_children_by_id("txt")[1].text = "📦:" .. count
-    end
-}
-local function update_package_widget()
-    package_widget:set_count(get_package_count())
-end
-gears.timer {
-    timeout = 86400,
-    autostart = true,
-    callback = update_package_widget
-}
-update_package_widget()
-
--- Uptime widget t
+-- Uptime widget
 local uptime_icon = wibox.widget.textbox("⏳")
 local uptime_widget = wibox.widget.textbox()
 vicious.register(uptime_widget, vicious.widgets.uptime, function(widget, args)
-    if args[1] > 0 then
-        return string.format(":%dd", args[1])
-    elseif args[2] > 0 then
-        return string.format(":%dh", args[2])
-    else
-        return string.format(":%dm", args[3])
+    local days = args[1]
+    local hours = args[2]
+    local minutes = args[3]
+    local result = ""
+    if days > 0 then
+        result = result .. string.format("%dd ", days)
     end
+    if hours > 0 then
+        result = result .. string.format("%dh ", hours)
+    end
+    if minutes > 0 then
+        result = result .. string.format("%dm", minutes)
+    end
+
+    return result
 end, 61)
 local myuptime = wibox.widget {
     uptime_icon,
@@ -283,20 +274,20 @@ end
 -- Create widgets with alternating colors
 mytextclock = create_widget(mytextclock, colors[2])
 mybattery = create_widget(mybattery, colors[2])
-wifi_widget = create_widget(wifi_widget, colors[1])
-mycpu = create_widget(mycpu, colors[2])
-mem_widget = create_widget(mem_widget, colors[1])
-package_widget = create_widget(package_widget, colors[2])
+mykernel = create_widget(mykernel, colors[1])
+wifi_widget = create_widget(wifi_widget, colors[2])
+mycpu = create_widget(mycpu, colors[1])
+mem_widget = create_widget(mem_widget, colors[2])
 update_widget = create_widget(update_widget, colors[1])
 myuptime = create_widget(myuptime, colors[2], true)
 volume_widget = create_widget(volume_widget, colors[1])
 
 --Widget Spacing
 mybattery = wibox.container.margin(mybattery, spacing, spacing)
+mykernel = wibox.container.margin(mykernel, spacing, spacing)
 wifi_widget = wibox.container.margin(wifi_widget, spacing, spacing)
 mycpu = wibox.container.margin(mycpu, spacing, spacing)
 mem_widget = wibox.container.margin(mem_widget, spacing, spacing)
-package_widget = wibox.container.margin(package_widget, spacing, spacing)
 update_widget = wibox.container.margin(update_widget, spacing, spacing)
 myuptime = wibox.container.margin(myuptime, spacing, spacing)
 mytextclock = wibox.container.margin(mytextclock, spacing, spacing)
@@ -447,10 +438,10 @@ mytasklist = awful.widget.tasklist {
             layout = wibox.layout.fixed.horizontal,
             wibox.widget.systray(),
             mybattery,
+            mykernel,
             wifi_widget,
             mycpu,
             mem_widget,
-            package_widget,
             update_widget,
             myuptime,
             volume_widget,
@@ -534,9 +525,9 @@ globalkeys = gears.table.join(
               {description = "increase the number of columns", group = "layout"}),
     awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1, nil, true)    end,
               {description = "decrease the number of columns", group = "layout"}),
-    awful.key({ modkey,           }, "space", function () awful.layout.inc( 1)                end,
+    awful.key({ modkey,           }, "Tab", function () awful.layout.inc( 1)                end,
               {description = "select next", group = "layout"}),
-    awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(-1)                end,
+    awful.key({ modkey, "Shift"   }, "Tab", function () awful.layout.inc(-1)                end,
               {description = "select previous", group = "layout"}),
 
     awful.key({ modkey, "Control" }, "n",
@@ -635,6 +626,8 @@ clientkeys = gears.table.join(
         end,
         {description = "toggle fullscreen", group = "client"}),
     awful.key({ modkey,  		  }, "q",      function (c) c:kill()                         end,
+              {description = "close", group = "client"}),
+    awful.key({ modkey,  "Shift"  }, "c",      function (c) c:kill()                         end,
               {description = "close", group = "client"}),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
               {description = "toggle floating", group = "client"}),
@@ -761,7 +754,7 @@ awful.rules.rules = {
           }
       }, properties = { floating = true }},
       
-      -- Set Apps to Spawn on Specific Workspaces 
+      -- Set Apps to Spawn on Specific Tags 
 
     -- Set Floorp to always spawn on tag "1" on screen 1.
      { rule = { class = "floorp" },
