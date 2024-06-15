@@ -584,6 +584,10 @@ globalkeys = gears.table.join(
     awful.key({ modkey },            "g",     function () 
     awful.util.spawn("geany") end,
               {description = "geany", group = "development"}),
+    -- Awesome Config File
+    awful.key({ modkey },            "c",     function () 
+    awful.util.spawn("geany /home/aston/.config/awesome/rc.lua") end,
+              {description = "geany", group = "development"}),           
 	-- Virt-Manager
     awful.key({ modkey, "Shift" },            "v",     function () 
     awful.util.spawn("virt-manager") end,
