@@ -96,14 +96,14 @@ local names={"1", "2", "3", "4", "5", "6", "7", "8"}
 --local names={"", "", "", "", "", "", "", ""}
 --local names={"WEB", "DEV", "SYS", "DOC", "VBOX", "MUS", "VID", "GFX"}
 local l = awful.layout.suit
-local layouts = {l.tile,l.tile,l.tile,l.max,l.tile,l.tile,l.tile,l.tile} --Set a Layout for each Tag
+local layouts = {l.tile,l.tile,l.tile,l.tile,l.tile,l.tile,l.tile,l.tile} --Set a Layout for each Tag
 awful.tag(names,s,layouts)
 	
 -- Define a few layouts
 awful.layout.layouts = {
     awful.layout.suit.tile,
     awful.layout.suit.max,
-    awful.layout.suit.max.fullscreen,
+    --awful.layout.suit.max.fullscreen,
     awful.layout.suit.floating,
 }
 -- }}}
@@ -612,13 +612,13 @@ globalkeys = gears.table.join(
     awful.util.spawn("brightnessctl set 10%-") end, -- Decrease brightness by 10%
      {description = "decrease brightness", group = "screen"}),
 	-- Volume control
-	awful.key({modkey, },    "F3", 			 function ()
+	awful.key({ctrlkey, },    "F3", 			 function ()
     awful.util.spawn("amixer set Master 5%+") end,
 			{description = "increase volume", group = "audio"}),
-	awful.key({modkey, },	 "F2", 		function ()
+	awful.key({ctrlkey, },	 "F2", 		function ()
     awful.util.spawn("amixer set Master 5%-") end, 
 			{description = "decrease volume", group = "audio"}),
-	awful.key({modkey, }, 	 "F4",		 function ()
+	awful.key({ctrlkey, }, 	 "F4",		 function ()
     awful.util.spawn("amixer set Master toggle") end,
 			 {description = "mute volume", group = "audio"})
 )
