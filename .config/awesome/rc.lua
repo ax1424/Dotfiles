@@ -141,15 +141,6 @@ awesome_icon:connect_signal("button::press", function(_, _, _, button)
     end
 end)
 
- -- WiFi widget
-local wifi_widget = wibox.widget.textbox()
-local interface = "wlan0" -- Replace with your network interface name
-vicious.register(wifi_widget, vicious.widgets.net, 
-      function (widget, args)
-          return string.format("📡:%s ↓↑ %s", args["{" .. interface .. " down_kb}"],
-           args["{" .. interface .. " up_kb}"])
-      end, 2)
-    
 -- Battery widget
 mybattery = wibox.widget.textbox()
 vicious.register(mybattery, vicious.widgets.bat, "🔋:$2%", 61, "BAT0")
@@ -164,6 +155,27 @@ end, 3600)
 local mykernel = wibox.widget {
     kernel_icon,
     kernel_widget,
+    layout = wibox.layout.fixed.horizontal,
+    
+}
+
+--Storage Widget
+local storage_icon = wibox.widget.textbox("💾 ")
+local storage_widget = wibox.widget.textbox()
+local function get_available_storage()
+    local handle = io.popen("df -h --output=avail / | tail -n 1")
+    local result = handle:read("*a")
+    handle:close()
+    return result:match("^%s*(.-)%s*$")  -- Trim leading and trailing whitespace
+end
+vicious.register(storage_widget, vicious.widgets.dio, function(widget, args)
+    -- Get the available storage
+    local available_storage = get_available_storage()
+    return available_storage
+end, 86400)  -- Update every 24 hours
+local mystorage = wibox.widget {
+    storage_icon,
+    storage_widget,
     layout = wibox.layout.fixed.horizontal,
 }
 
@@ -275,7 +287,7 @@ end
 mytextclock = create_widget(mytextclock, colors[2])
 mybattery = create_widget(mybattery, colors[2])
 mykernel = create_widget(mykernel, colors[1])
-wifi_widget = create_widget(wifi_widget, colors[2])
+mystorage = create_widget(mystorage, colors[2])
 mycpu = create_widget(mycpu, colors[1])
 mem_widget = create_widget(mem_widget, colors[2])
 update_widget = create_widget(update_widget, colors[1])
@@ -285,7 +297,7 @@ volume_widget = create_widget(volume_widget, colors[1])
 --Widget Spacing
 mybattery = wibox.container.margin(mybattery, spacing, spacing)
 mykernel = wibox.container.margin(mykernel, spacing, spacing)
-wifi_widget = wibox.container.margin(wifi_widget, spacing, spacing)
+mystorage = wibox.container.margin(mystorage, spacing, spacing)
 mycpu = wibox.container.margin(mycpu, spacing, spacing)
 mem_widget = wibox.container.margin(mem_widget, spacing, spacing)
 update_widget = wibox.container.margin(update_widget, spacing, spacing)
@@ -439,7 +451,7 @@ mytasklist = awful.widget.tasklist {
             wibox.widget.systray(),
             mybattery,
             mykernel,
-            wifi_widget,
+            mystorage,
             mycpu,
             mem_widget,
             update_widget,
