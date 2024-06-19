@@ -39,10 +39,11 @@ def maximize_by_switching_layout(qtile):
 
 keys = [
     # The essentials
-    Key([mod], "Return", lazy.spawn(myTerm), desc="Terminal"),
+    Key([mod], "Return", lazy.spawn(myTerm), desc='Terminal'),
     Key([mod, "shift"], "Return", lazy.spawn("rofi -show drun"), desc='Run Launcher'),
     Key([mod], "t", lazy.spawn("thunderbird"), desc='Email Client'),
     Key([mod], "g", lazy.spawn(myEditor), desc='Text Editor'),
+    Key([mod], "w", lazy.spawn(myBrowser), desc='Web Browser'),
     # Utilities
     Key([mod,  "shift"], "f", lazy.spawn("thunar"), desc='File Manager'),
     Key([mod,  "shift"], "v", lazy.spawn("virt-manager"), desc='Virt-Manager'),
@@ -62,8 +63,8 @@ keys = [
     Key([mod, "shift"], "c", lazy.window.kill(), desc="Kill focused window"),
     Key([mod], "q", lazy.window.kill(), desc="Kill focused window"),
     Key([mod, "shift"], "r", lazy.reload_config(), desc="Reload the config"),
-    #Key([mod, "shift"], "q", lazy.spawn("dm-logout -r"), desc="Logout menu"),
-    #Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
+    Key([mod, "shift"], "q", lazy.spawn("/home/aston/ro-scripts/sys_menu.sh"), desc="Logout menu"),
+    Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
     
     # Switch between windows
     # Some layouts like 'monadtall' only need to use j/k to move
@@ -161,9 +162,9 @@ keys = [
 groups = []
 group_names = ["1", "2", "3", "4", "5", "6", "7", "8", "9",]
 
-group_labels = ["1", "2", "3", "4", "5", "6", "7", "8", "9",]
+#group_labels = ["1", "2", "3", "4", "5", "6", "7", "8", "9",]
 #group_labels = ["DEV", "WWW", "SYS", "DOC", "VBOX", "CHAT", "MUS", "VID", "GFX",]
-#group_labels = ["", "", "", "", "", "", "", "", "",]
+group_labels = ["", "", "", "", "", "", "", "", "",]
 
 group_layouts = ["monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall"]
 
@@ -316,7 +317,7 @@ def init_widgets_list():
                  ),
         widget.Spacer(length = 8),
         widget.Systray(padding = 3),
-        widget.Spacer(length = 8),
+        widget.Spacer(length = 12),
         widget.GenPollText(
                  update_interval = 300,
                  func = lambda: subprocess.check_output("printf $(uname -r)", shell=True, text=True),
@@ -355,17 +356,17 @@ def init_widgets_list():
                  ),
         widget.Spacer(length = 8),
         widget.CheckUpdates(
-                    update_interval=1800,  
-                    distro="Arch_checkupdates", 
-                    display_format=' Updates:  {updates}',
-                    no_update_string=' 0 updates',
-                    mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(myTerm + ' -e sudo pacman -Syu')},
-                    colour_have_updates=colors[3],
-                    colour_no_updates=colors[3],
-                    decorations=[
-                        BorderDecoration(
-                            colour=colors[3],
-                            border_width=[0, 0, 2, 0],
+                 update_interval=1800,  
+                 distro="Arch_checkupdates", 
+                 display_format=' Updates:  {updates}',
+                 no_update_string=' Updates:  0',
+                 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(myTerm + ' -e sudo pacman -Syu')},
+                 colour_have_updates=colors[3],
+                 colour_no_updates=colors[3],
+                 decorations=[
+                     BorderDecoration(
+                         colour=colors[3],
+                         border_width=[0, 0, 2, 0],
                       )
                    ],
                    ),
@@ -400,7 +401,7 @@ def init_widgets_list():
         widget.Spacer(length = 8),
         widget.Battery(
 				 foreground = colors[4],
-				 format = 'Bat:  {percent:2.0%}',
+				 format = '󰂄  Bat:  {percent:2.0%}',
 				 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn('xfce4-power-manager-settings')},
 				 decorations=[
 					 BorderDecoration(
@@ -437,9 +438,8 @@ def init_widgets_screen2():
 
 # For adding transparency to your bar, add (background="#00000000") to the "Screen" line(s)
 # For ex: Screen(top=bar.Bar(widgets=init_widgets_screen2(), background="#00000000", size=24)),
-
 def init_screens():
-    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), size=30))]
+    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), size=28))]
             #Screen(top=bar.Bar(widgets=init_widgets_screen2(), size=26)),
             #Screen(top=bar.Bar(widgets=init_widgets_screen2(), size=26))]
 

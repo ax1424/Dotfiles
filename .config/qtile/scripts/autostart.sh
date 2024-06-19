@@ -2,7 +2,7 @@
 
 ### AUTOSTART PROGRAMS ###
 copyq & #clipboard manager
-flameshot & #screenshot tool
+#flameshot & #screenshot tool
 lxsession & #session manager
 mpv --no-video ~/Music/startup.mp3 & #startup sound
 nitrogen --restore & #restore the last wallpaper
