@@ -1,4 +1,70 @@
-##### IMPORTS #####
+#+TITLE: Qtile Config
+#+AUTHOR: Derek Taylor
+#+PROPERTY: header-args :tangle config.py
+#+auto_tangle: t
+#+STARTUP: showeverything
+
+* Table of Contents :toc:
+- [[#about-this-config][About This Config]]
+- [[#imports][Imports]]
+- [[#variables][Variables]]
+- [[#custom-functions][Custom Functions]]
+- [[#keybindings][Keybindings]]
+- [[#groups][Groups]]
+- [[#colorscheme][Colorscheme]]
+- [[#default-settings-for-all-layouts][Default Settings For All Layouts]]
+- [[#layouts][Layouts]]
+- [[#default-settings-for-all-widgets][Default Settings For All Widgets]]
+- [[#widgets][Widgets]]
+- [[#screens][Screens]]
+- [[#some-important-functions][Some Important Functions]]
+- [[#drag-floating-layouts][Drag Floating Layouts]]
+- [[#window-rules][Window Rules]]
+- [[#autostart-programs][Autostart Programs]]
+- [[#java-apps-might-need-this][Java Apps Might Need This]]
+
+* About This Config
+#+CAPTION: Qtile Scrot
+#+ATTR_HTML: :alt Qtile Scrot :title Qtile Scrot :align left
+[[https://gitlab.com/dwt1/dotfiles/-/raw/master/.screenshots/dotfiles07-thumb.png]]
+
+Modified by Derek Taylor
+- My YouTube: [[http://www.youtube.com/c/DistroTube][http://www.youtube.com/c/DistroTube]]
+- My GitLab:  [[http://www.gitlab.com/dwt1/][http://www.gitlab.com/dwt1/]]
+
+#+begin_src python
+# Copyright (c) 2010 Aldo Cortesi
+# Copyright (c) 2010, 2014 dequis
+# Copyright (c) 2012 Randall Ma
+# Copyright (c) 2012-2014 Tycho Andersen
+# Copyright (c) 2012 Craig Barnes
+# Copyright (c) 2013 horsik
+# Copyright (c) 2013 Tao Sauvage
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+#+end_src
+
+* Imports
+These are python modules that must be imported for this config.
+
+#+BEGIN_SRC python
 import os
 import subprocess
 from libqtile import bar, extension, hook, layout, qtile, widget
@@ -10,13 +76,21 @@ from qtile_extras.widget.decorations import BorderDecoration
 #from qtile_extras.widget import StatusNotifier
 import colors
 
-##### VARIABLES #####
+#+END_SRC
+
+* Variables
+Just some variables I am setting to make my life easier.
+
+#+BEGIN_SRC python
 mod = "mod4"              # Sets mod key to SUPER/WINDOWS
 myTerm = "alacritty"      # My terminal of choice
-myBrowser = "librewolf"   # My browser of choice
-myEditor = "geany"		  # My text editor of choice
-#myEmacs = "emacsclient -c -a 'emacs' " # The space at the end is IMPORTANT!
+myBrowser = "firefox"     # My browser of choice
+myEmacs = "emacsclient -c -a 'emacs' " # The space at the end is IMPORTANT!
 
+#+END_SRC
+
+* Custom Functions
+#+begin_src python
 # Allows you to input a name when adding treetab section.
 @lazy.layout.function
 def add_treetab_section(layout):
@@ -38,36 +112,42 @@ def maximize_by_switching_layout(qtile):
         qtile.current_group.layout = 'max'
     elif current_layout_name == 'max':
         qtile.current_group.layout = 'monadtall'
-        
-##### KEYBINDINGS #####       
+
+#+end_src
+
+* Keybindings
+A list of available commands that can be bound to keys can be found at: https://docs.qtile.org/en/latest/manual/config/lazy.html
+
+| IMPORTANT KEYBINDINGS   | ASSOCIATED ACTION                                              |
+|-------------------------+----------------------------------------------------------------|
+| MODKEY + RETURN         | opens terminal (alacritty)                                     |
+| MODKEY + SHIFT + RETURN | opens run launcher (rofi)                                      |
+| MODKEY + TAB            | rotates through the available layouts                          |
+| MODKEY + SHIFT + c      | closes window with focus                                       |
+| MODKEY + SHIFT + r      | restarts qtile                                                 |
+| MODKEY + SHIFT + q      | quits qtile                                                    |
+| MODKEY + 1-9            | switch focus to workspace (1-9)                                |
+| MODKEY + SHIFT + 1-9    | send focused window to workspace (1-9)                         |
+| MODKEY + j              | lazy layout down (switches focus between windows in the stack) |
+| MODKEY + k              | lazy layout up (switches focus between windows in the stack)   |
+| MODKEY + SHIFT + j      | lazy layout shuffle_down (rotates the windows in the stack)    |
+| MODKEY + SHIFT + k      | lazy layout shuffle_up (rotates the windows in the stack)      |
+| MODKEY + equals         | expand size of window (MondadTall layout)                      |
+| MODKEY + minus          | shrink size of window (MondadTall layout)                      |
+| MODKEY + period         | switch focus to next monitor                                   |
+| MODKEY + comma          | switch focus to prev monitor                                   |
+
+#+begin_src python
 keys = [
     # The essentials
-    Key([mod], "Return", lazy.spawn(myTerm), desc='Terminal'),
-    Key([mod, "shift"], "Return", lazy.spawn("dmenu_run"), desc='Run Launcher'),
-    #Key([mod, "shift"], "Return", lazy.spawn("rofi -show drun"), desc='Run Launcher'),
-    Key([mod], "g", lazy.spawn(myEditor), desc='Text Editor'),
-    Key([mod], "w", lazy.spawn(myBrowser), desc='Web Browser'),
-    Key([mod, "shift"], "t", lazy.spawn("thunderbird"), desc='Email Client'),
-    # Utilities
-    Key([mod,  "shift"], "f", lazy.spawn("thunar"), desc='File Manager'),
-    Key([mod], "r", lazy.spawn(myTerm + " -e ranger"), desc='Ranger File Manager'),
-    Key([mod,  "shift"], "v", lazy.spawn("virt-manager"), desc='Virt-Manager'),
-    Key([mod], "o", lazy.spawn("onlyoffice"), desc='Office Suite'),
-    # Brightness control
-    Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl set +10%"), desc="Increase brightness by 10%"),
-    Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl set 10%-"), desc="Decrease brightness by 10%"),
-    # Volume control
-    Key([mod], "F3", lazy.spawn("amixer set Master 5%+"), desc="Increase volume"),
-    Key([mod], "F2", lazy.spawn("amixer set Master 5%-"), desc="Decrease volume"),
-    Key([mod], "F4", lazy.spawn("amixer set Master toggle"), desc="Mute volume"),
-    Key([mod], "d", lazy.spawn("deadbeef"), desc='Music Player'),
-    Key([mod], "v", lazy.spawn("pavucontrol"), desc='Volume Control'),
-    # Qtile 
+    Key([mod], "Return", lazy.spawn(myTerm), desc="Terminal"),
+    Key([mod, "shift"], "Return", lazy.spawn("rofi -show drun"), desc='Run Launcher'),
+    Key([mod], "b", lazy.spawn(myBrowser), desc='Web browser'),
     Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
     Key([mod, "shift"], "c", lazy.window.kill(), desc="Kill focused window"),
-    Key([mod], "q", lazy.window.kill(), desc="Kill focused window"),
     Key([mod, "shift"], "r", lazy.reload_config(), desc="Reload the config"),
-    Key([mod, "shift"], "q", lazy.spawn("/home/aston/ro-scripts/sys_menu.sh"), desc="Logout menu"),
+    Key([mod, "shift"], "q", lazy.spawn("dm-logout -r"), desc="Logout menu"),
+    Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
     
     # Switch between windows
     # Some layouts like 'monadtall' only need to use j/k to move
@@ -141,35 +221,54 @@ keys = [
     Key([mod], "period", lazy.next_screen(), desc='Move focus to next monitor'),
     Key([mod], "comma", lazy.prev_screen(), desc='Move focus to prev monitor'),
     
-     #Emacs programs launched using the key chord CTRL+e followed by 'key'
-    #KeyChord([mod],"e", [
-        #Key([], "e", lazy.spawn(myEmacs), desc='Emacs Dashboard'),
-        #Key([], "a", lazy.spawn(myEmacs + "--eval '(emms-play-directory-tree \"~/Music/\")'"), desc='Emacs EMMS'),
-        #Key([], "b", lazy.spawn(myEmacs + "--eval '(ibuffer)'"), desc='Emacs Ibuffer'),
-        #Key([], "d", lazy.spawn(myEmacs + "--eval '(dired nil)'"), desc='Emacs Dired'),
-        #Key([], "i", lazy.spawn(myEmacs + "--eval '(erc)'"), desc='Emacs ERC'),
-        #Key([], "s", lazy.spawn(myEmacs + "--eval '(eshell)'"), desc='Emacs Eshell'),
-        #Key([], "v", lazy.spawn(myEmacs + "--eval '(vterm)'"), desc='Emacs Vterm'),
-        #Key([], "w", lazy.spawn(myEmacs + "--eval '(eww \"distro.tube\")'"), desc='Emacs EWW'),
-        #Key([], "F4", lazy.spawn("killall emacs"),
-                      #lazy.spawn("/usr/bin/emacs --daemon"),
-                      #desc='Kill/restart the Emacs daemon')
-    #]),
+    # Emacs programs launched using the key chord CTRL+e followed by 'key'
+    KeyChord([mod],"e", [
+        Key([], "e", lazy.spawn(myEmacs), desc='Emacs Dashboard'),
+        Key([], "a", lazy.spawn(myEmacs + "--eval '(emms-play-directory-tree \"~/Music/\")'"), desc='Emacs EMMS'),
+        Key([], "b", lazy.spawn(myEmacs + "--eval '(ibuffer)'"), desc='Emacs Ibuffer'),
+        Key([], "d", lazy.spawn(myEmacs + "--eval '(dired nil)'"), desc='Emacs Dired'),
+        Key([], "i", lazy.spawn(myEmacs + "--eval '(erc)'"), desc='Emacs ERC'),
+        Key([], "s", lazy.spawn(myEmacs + "--eval '(eshell)'"), desc='Emacs Eshell'),
+        Key([], "v", lazy.spawn(myEmacs + "--eval '(vterm)'"), desc='Emacs Vterm'),
+        Key([], "w", lazy.spawn(myEmacs + "--eval '(eww \"distro.tube\")'"), desc='Emacs EWW'),
+        Key([], "F4", lazy.spawn("killall emacs"),
+                      lazy.spawn("/usr/bin/emacs --daemon"),
+                      desc='Kill/restart the Emacs daemon')
+    ]),
     # Dmenu/rofi scripts launched using the key chord SUPER+p followed by 'key'
     KeyChord([mod], "p", [
-        Key([], "b", lazy.spawn("/home/aston/ro-scripts/wallpaper.sh"), desc='Set background'),
-        Key([], "q", lazy.spawn("/home/aston/ro-scripts/sys_menu.sh"), desc='Logout menu'),
+        Key([], "h", lazy.spawn("dm-hub -r"), desc='List all dmscripts'),
+        Key([], "a", lazy.spawn("dm-sounds -r"), desc='Choose ambient sound'),
+        Key([], "b", lazy.spawn("dm-setbg -r"), desc='Set background'),
+        Key([], "c", lazy.spawn("dtos-colorscheme -r"), desc='Choose color scheme'),
+        Key([], "e", lazy.spawn("dm-confedit -r"), desc='Choose a config file to edit'),
+        Key([], "i", lazy.spawn("dm-maim -r"), desc='Take a screenshot'),
+        Key([], "k", lazy.spawn("dm-kill -r"), desc='Kill processes '),
+        Key([], "m", lazy.spawn("dm-man -r"), desc='View manpages'),
+        Key([], "n", lazy.spawn("dm-note -r"), desc='Store and copy notes'),
+        Key([], "o", lazy.spawn("dm-bookman -r"), desc='Browser bookmarks'),
+        Key([], "p", lazy.spawn("rofi-pass"), desc='Logout menu'),
+        Key([], "q", lazy.spawn("dm-logout -r"), desc='Logout menu'),
+        Key([], "r", lazy.spawn("dm-radio -r"), desc='Listen to online radio'),
+        Key([], "s", lazy.spawn("dm-websearch -r"), desc='Search various engines'),
+        Key([], "t", lazy.spawn("dm-translate -r"), desc='Translate text')
     ])
 ]
 
+#+end_src
+
+* Groups
+Groups are really workspaces.  group_names should remain 1-9 so the MOD+1-9 keybindings work as expected.  group_labels are the labels of the groups that are displayed in the bar.  Feel free to change group_labels to anything you wish.  group_layouts sets the default layout for each group.
+
+#+begin_src python
 groups = []
 group_names = ["1", "2", "3", "4", "5", "6", "7", "8", "9",]
 
-group_labels = ["", "", "", "", "", "", "", "", "",]
-#group_labels = ["1", "2", "3", "4", "5", "6", "7", "8", "9",]
+group_labels = ["1", "2", "3", "4", "5", "6", "7", "8", "9",]
 #group_labels = ["DEV", "WWW", "SYS", "DOC", "VBOX", "CHAT", "MUS", "VID", "GFX",]
+#group_labels = ["", "", "", "", "", "", "", "", "",]
 
-group_layouts = ["monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall"]
+group_layouts = ["monadtall", "monadtall", "tile", "tile", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall"]
 
 for i in range(len(group_names)):
     groups.append(
@@ -199,16 +298,43 @@ for i in groups:
         ]
     )
 
-##### COLORS #####
+#+end_src
+
+* Colorscheme
+Colors are defined in a separate 'colors.py' file.  It is best not manually change the colorscheme; instead run 'dtos-colorscheme' which is set to 'MOD + p c'. There are 10 colorschemes available to choose from:
+
++ colors.DoomOne
++ colors.Dracula
++ colors.GruvboxDark
++ colors.MonokaiPro
++ colors.Nord
++ colors.OceanicNext
++ colors.Palenight
++ colors.SolarizedDark
++ colors.SolarizedLight
++ colors.TomorrowNight
+
+#+begin_src python
 colors = colors.DoomOne
 
-##### LAYOUTS #####
+#+end_src
+
+* Default Settings For All Layouts
+Some settings that I use on almost every layout, which saves me from having to type these out for each individual layout.
+
+#+begin_src python
 layout_theme = {"border_width": 2,
                 "margin": 8,
                 "border_focus": colors[8],
                 "border_normal": colors[0]
                 }
 
+#+end_src
+
+* Layouts
+The layouts that I use, plus several that I don't use. Uncomment the layouts you want; comment out the ones that you don't want to use.
+
+#+begin_src python
 layouts = [
     #layout.Bsp(**layout_theme),
     #layout.Floating(**layout_theme)
@@ -252,31 +378,46 @@ layouts = [
     #     ),
     #layout.Zoomy(**layout_theme),
 ]
+#+end_src
 
-##### WIDGETS #####
+* Default Settings For All Widgets
+Some settings that I use on almost every widget, which saves me from having to type these out for each individual widget.
+
+#+begin_src python
 widget_defaults = dict(
     font="Ubuntu Bold",
-    fontsize = 14,
+    fontsize = 12,
     padding = 0,
     background=colors[0]
 )
 
 extension_defaults = widget_defaults.copy()
 
+#+end_src
+
+
+* Widgets
+This is the bar (the panel) and the widgets within the bar.
+
+#+begin_src python
 def init_widgets_list():
     widgets_list = [
-        widget.Spacer(length = 8),
         widget.Image(
-                 filename = "~/.config/qtile/icons/python-white.png",
+                 filename = "~/.config/qtile/icons/logo.png",
                  scale = "False",
                  mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(myTerm)},
                  ),
+        widget.Prompt(
+                 font = "Ubuntu Mono",
+                 fontsize=14,
+                 foreground = colors[1]
+        ),
         widget.GroupBox(
-                 fontsize = 14,
+                 fontsize = 11,
                  margin_y = 5,
                  margin_x = 5,
-                 padding_y = 5,
-                 padding_x = 5,
+                 padding_y = 0,
+                 padding_x = 1,
                  borderwidth = 3,
                  active = colors[8],
                  inactive = colors[1],
@@ -296,6 +437,7 @@ def init_widgets_list():
                  fontsize = 14
                  ),
         widget.CurrentLayoutIcon(
+                 # custom_icon_paths = [os.path.expanduser("~/.config/qtile/icons")],
                  foreground = colors[1],
                  padding = 4,
                  scale = 0.6
@@ -311,18 +453,15 @@ def init_widgets_list():
                  padding = 2,
                  fontsize = 14
                  ),
-        widget.Spacer(length = 8),
         widget.WindowName(
                  foreground = colors[6],
                  max_chars = 40
                  ),
-        widget.Systray(padding = 3),
-        widget.Spacer(length = 12),
         widget.GenPollText(
                  update_interval = 300,
                  func = lambda: subprocess.check_output("printf $(uname -r)", shell=True, text=True),
                  foreground = colors[3],
-                 fmt = '󰋑   {}',
+                 fmt = '❤  {}',
                  decorations=[
                      BorderDecoration(
                          colour = colors[3],
@@ -332,7 +471,7 @@ def init_widgets_list():
                  ),
         widget.Spacer(length = 8),
         widget.CPU(
-                 format = '   Cpu: {load_percent}%',
+                 format = '▓  Cpu: {load_percent}%',
                  foreground = colors[4],
                  decorations=[
                      BorderDecoration(
@@ -346,7 +485,7 @@ def init_widgets_list():
                  foreground = colors[8],
                  mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(myTerm + ' -e htop')},
                  format = '{MemUsed: .0f}{mm}',
-                 fmt = '🖥  Mem: {}',
+                 fmt = '🖥  Mem: {} used',
                  decorations=[
                      BorderDecoration(
                          colour = colors[8],
@@ -355,38 +494,10 @@ def init_widgets_list():
                  ],
                  ),
         widget.Spacer(length = 8),
-        widget.GenPollText(
-                 update_interval = 60,
-                 func=lambda: subprocess.check_output(["uptime", "-p"]).decode().strip()[3:],
-                 foreground = colors[6],
-                 fmt = '     {}',
-                 decorations=[
-                     BorderDecoration(
-                         colour = colors[6],
-                         border_width = [0, 0, 2, 0],
-                     )
-                 ],
-                 ),
-        widget.Spacer(length = 8),
-        widget.CheckUpdates(
-                 update_interval=1800,  
-                 distro="Arch_checkupdates", 
-                 display_format='   {updates} Updates',
-                 no_update_string='   0 Updates',
-                 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(myTerm + ' -e sudo pacman -Syu')},
-                 colour_have_updates=colors[3],
-                 colour_no_updates=colors[3],
-                 decorations=[
-                     BorderDecoration(
-                         colour=colors[3],
-                         border_width=[0, 0, 2, 0],
-                      )
-                   ],
-                   ),
-        widget.Spacer(length = 8),
         widget.DF(
                  update_interval = 60,
                  foreground = colors[5],
+                 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(myTerm + ' -e df')},
                  partition = '/',
                  #format = '[{p}] {uf}{m} ({r:.0f}%)',
                  format = '{uf}{m} free',
@@ -403,7 +514,6 @@ def init_widgets_list():
         widget.Volume(
                  foreground = colors[7],
                  fmt = '🕫  Vol: {}',
-                 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn('pavucontrol')},
                  decorations=[
                      BorderDecoration(
                          colour = colors[7],
@@ -412,21 +522,20 @@ def init_widgets_list():
                  ],
                  ),
         widget.Spacer(length = 8),
-        widget.Battery(
-				 foreground = colors[4],
-				 format = '󰂄  Bat:  {percent:2.0%}',
-				 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn('xfce4-power-manager-settings')},
-				 decorations=[
-					 BorderDecoration(
-                        colour = colors[4],
-                        border_width = [0, 0, 2, 0],
-					 )
-				 ],
-			     ),
+        widget.KeyboardLayout(
+                 foreground = colors[4],
+                 fmt = '⌨  Kbd: {}',
+                 decorations=[
+                     BorderDecoration(
+                         colour = colors[4],
+                         border_width = [0, 0, 2, 0],
+                     )
+                 ],
+                 ),
         widget.Spacer(length = 8),
         widget.Clock(
                  foreground = colors[8],
-                 format = "⏱  %a, %b %d - %I:%M",
+                 format = "⏱  %a, %b %d - %H:%M",
                  decorations=[
                      BorderDecoration(
                          colour = colors[8],
@@ -435,9 +544,18 @@ def init_widgets_list():
                  ],
                  ),
         widget.Spacer(length = 8),
-				 ]
+        widget.Systray(padding = 3),
+        widget.Spacer(length = 8),
+
+        ]
     return widgets_list
 
+#+end_src
+
+* Screens
+Screen settings for my triple monitor setup. Monitor 1 will display ALL widgets in widgets_list. It is important that this is the *only* monitor that displays all widgets because the systray widget will crash if you try to run multiple instances of it.
+
+#+begin_src python
 def init_widgets_screen1():
     widgets_screen1 = init_widgets_list()
     return widgets_screen1 
@@ -449,9 +567,12 @@ def init_widgets_screen2():
     return widgets_screen2
 
 # For adding transparency to your bar, add (background="#00000000") to the "Screen" line(s)
-# For ex: Screen(top=bar.Bar(widgets=init_widgets_screen1(), background="#00000000", size=24)),
+# For ex: Screen(top=bar.Bar(widgets=init_widgets_screen2(), background="#00000000", size=24)),
+
 def init_screens():
-    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), size=24))]
+    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), size=26)),
+            Screen(top=bar.Bar(widgets=init_widgets_screen2(), size=26)),
+            Screen(top=bar.Bar(widgets=init_widgets_screen2(), size=26))]
 
 if __name__ in ["config", "__main__"]:
     screens = init_screens()
@@ -459,6 +580,11 @@ if __name__ in ["config", "__main__"]:
     widgets_screen1 = init_widgets_screen1()
     widgets_screen2 = init_widgets_screen2()
 
+#+end_src
+
+* Some Important Functions
+
+#+begin_src python
 def window_to_prev_group(qtile):
     if qtile.currentWindow is not None:
         i = qtile.groups.index(qtile.currentGroup)
@@ -485,13 +611,22 @@ def switch_screens(qtile):
     i = qtile.screens.index(qtile.current_screen)
     group = qtile.screens[i - 1].group
     qtile.current_screen.set_group(group)
+#+end_src
 
+* Drag Floating Layouts
+Sets MOD + left mouse to drag floating windows.  Sets MOD + right mouse to resize floating windows.
+
+#+begin_src python
 mouse = [
     Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
     Drag([mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()),
     Click([mod], "Button2", lazy.window.bring_to_front()),
 ]
 
+#+end_src
+
+* Window Rules
+#+begin_src python
 dgroups_key_binder = None
 dgroups_app_rules = []  # type: list
 follow_mouse_focus = True
@@ -512,10 +647,18 @@ floating_layout = layout.Floating(
         Match(wm_class="makebranch"),     # gitk
         Match(wm_class="maketag"),        # gitk
         Match(wm_class="notification"),   # notifications
+        Match(wm_class='pinentry-gtk-2'), # GPG key password entry
+        Match(wm_class="ssh-askpass"),    # ssh-askpass
         Match(wm_class="toolbar"),        # toolbars
         Match(wm_class="Yad"),            # yad boxes
         Match(title="branchdialog"),      # gitk
-        Match(title='galculator'),        # galculator
+        Match(title='Confirmation'),      # tastyworks exit box
+        Match(title='Qalculate!'),        # qalculate-gtk
+        Match(title="pinentry"),          # GPG key password entry
+        Match(title="tastycharts"),       # tastytrade pop-out charts
+        Match(title="tastytrade"),        # tastytrade pop-out side gutter
+        Match(title="tastytrade - Portfolio Report"), # tastytrade pop-out allocation
+        Match(wm_class="tasty.javafx.launcher.LauncherFxApp"), # tastytrade settings
     ]
 )
 auto_fullscreen = True
@@ -529,11 +672,29 @@ auto_minimize = True
 # When using the Wayland backend, this can be used to configure input devices.
 wl_input_rules = None
 
-##### AUTOSTART #####
+#+end_src
+
+* Autostart Programs
+Executes a bash script (autostart.sh) which launches programs for autostart.
+
+#+begin_src python
 @hook.subscribe.startup_once
 def start_once():
     home = os.path.expanduser('~')
     subprocess.call([home + '/.config/qtile/autostart.sh'])
-    
-##### WMNAME #####
+
+#+end_src
+
+* Java Apps Might Need This
+#+begin_src python
+# XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
+# string besides java UI toolkits; you can see several discussions on the
+# mailing lists, GitHub issues, and other WM documentation that suggest setting
+# this string if your java app doesn't work correctly. We may as well just lie
+# and say that we're a working one by default.
+#
+# We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
+# java that happens to be on java's whitelist.
 wmname = "LG3D"
+
+#+end_src

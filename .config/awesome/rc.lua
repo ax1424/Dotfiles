@@ -92,11 +92,11 @@ local ctrlkey     = "Control"
 local terminal    = "alacritty"
 
 -- Tags
-local names={"1", "2", "3", "4", "5", "6", "7", "8"}
---local names={"", "", "", "", "", "", "", ""}
+local names={"1", "2", "3", "4", "5", "6"}
+--Rlocal names={"", "", "", "", "", "", "", ""}
 --local names={"WEB", "DEV", "SYS", "DOC", "VBOX", "MUS", "VID", "GFX"}
 local l = awful.layout.suit
-local layouts = {l.tile,l.tile,l.tile,l.tile,l.tile,l.tile,l.tile,l.tile} --Set a Layout for each Tag
+local layouts = {l.tile,l.tile,l.tile,l.tile,l.tile,l.tile} --Set a Layout for each Tag
 awful.tag(names,s,layouts)
 	
 -- Define a few layouts
@@ -197,7 +197,7 @@ mem_widget:connect_signal("button::press", function(_, _, _, button)
 end)
 
 --Clock widget
-mytextclock = wibox.widget.textclock("📅:%a, %b %d - %I:%M %p")
+mytextclock = wibox.widget.textclock("🕑:%a, %b %d - %I:%M %p")
 
 -- Uptime widget
 local uptime_icon = wibox.widget.textbox("⏳")
@@ -225,37 +225,6 @@ local myuptime = wibox.widget {
     layout = wibox.layout.fixed.horizontal,
 }
 
--- Update Widget
-local update_widget = wibox.widget.textbox()
-local function update_check(widget)
-    awful.spawn.easy_async_with_shell("checkupdates | wc -l", function(stdout)
-        local updates = tonumber(stdout) or 0
-        widget.text = "🔄: " .. updates
-    end)
-end
-update_check(update_widget)
-gears.timer {
-    timeout   = 86400,  -- Check for updates every 24 hours
-    call_now  = true,
-    autostart = true,
-    callback  = function() update_check(update_widget) end
-}
-update_widget:connect_signal("button::press", function(_, _, _, button)
-    if button == 1 then -- Left mouse button
-        awful.spawn.easy_async_with_shell("/home/aston/.config/awesome/scripts/sys_update.sh", function(stdout, stderr, exitreason, exitcode)
-            -- Handle completion or errors if needed
-            if exitcode == 0 then
-                -- Update succeeded
-                naughty.notify({title = "System Update", text = "Update completed successfully", timeout = 5})
-            else
-                -- Update failed
-                naughty.notify({title = "System Update", text = "Update failed", timeout = 5})
-            end
-        end)
-    end
-end)
-
-
 -- Volume Widget
 local volume_widget = wibox.widget.textbox()
 vicious.register(volume_widget, vicious.widgets.volume, "🔊:$1%", 2, "Master")
@@ -273,7 +242,7 @@ systray_centered.valign = "center"
 
 -- Define the colors
 local colors = { "#003C8C", "#6D4A9C" }
-local spacing = 2
+local spacing = 6
 
 -- Function to create a widget with a background and margin
 local function create_widget(widget, color)
@@ -283,24 +252,12 @@ local function create_widget(widget, color)
     )
 end
 
--- Create widgets with alternating colors
-mytextclock = create_widget(mytextclock, colors[2])
-mybattery = create_widget(mybattery, colors[2])
-mykernel = create_widget(mykernel, colors[1])
-mystorage = create_widget(mystorage, colors[2])
-mycpu = create_widget(mycpu, colors[1])
-mem_widget = create_widget(mem_widget, colors[2])
-update_widget = create_widget(update_widget, colors[1])
-myuptime = create_widget(myuptime, colors[2], true)
-volume_widget = create_widget(volume_widget, colors[1])
-
 --Widget Spacing
 mybattery = wibox.container.margin(mybattery, spacing, spacing)
 mykernel = wibox.container.margin(mykernel, spacing, spacing)
 mystorage = wibox.container.margin(mystorage, spacing, spacing)
 mycpu = wibox.container.margin(mycpu, spacing, spacing)
 mem_widget = wibox.container.margin(mem_widget, spacing, spacing)
-update_widget = wibox.container.margin(update_widget, spacing, spacing)
 myuptime = wibox.container.margin(myuptime, spacing, spacing)
 mytextclock = wibox.container.margin(mytextclock, spacing, spacing)
 volume_widget = wibox.container.margin(volume_widget, spacing, spacing)
@@ -449,14 +406,21 @@ mytasklist = awful.widget.tasklist {
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             wibox.widget.systray(),
+            separator,
             mybattery,
+            separator,
             mykernel,
+            separator,
             mystorage,
+            separator,
             mycpu,
+            separator,
             mem_widget,
-            update_widget,
+            separator,
             myuptime,
+            separator,
             volume_widget,
+            separator,
             mytextclock,       
             --table.unpack(mywidgets),
         },
