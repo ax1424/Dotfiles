@@ -253,6 +253,25 @@ layouts = [
     #layout.Zoomy(**layout_theme),
 ]
 
+### Shorten the Uptime Output ###
+def shorten_uptime(uptime_str):
+    parts = uptime_str.split(', ')
+    short_parts = []
+
+    for part in parts:
+        if part.endswith(' hours'):
+            short_parts.append(part.replace(' hours', 'h'))
+        elif part.endswith(' hour'):
+            short_parts.append(part.replace(' hour', 'h'))
+        elif part.endswith(' minutes'):
+            short_parts.append(part.replace(' minutes', 'm'))
+        elif part.endswith(' minute'):
+            short_parts.append(part.replace(' minute', 'm'))
+        else:
+            short_parts.append(part)  # keep other parts unchanged
+
+    return ', '.join(short_parts)
+
 ##### WIDGETS #####
 widget_defaults = dict(
     font="Ubuntu Bold",
@@ -357,9 +376,9 @@ def init_widgets_list():
         widget.Spacer(length = 8),
         widget.GenPollText(
                  update_interval = 60,
-                 func=lambda: subprocess.check_output(["uptime", "-p"]).decode().strip()[3:],
+                 func=lambda: shorten_uptime(subprocess.check_output(["uptime", "-p"]).decode().strip()[3:]),
                  foreground = colors[6],
-                 fmt = '     {}',
+                 fmt = '   Uptime:  {}',
                  decorations=[
                      BorderDecoration(
                          colour = colors[6],
