@@ -7,7 +7,7 @@ local themes_path = gfs.get_themes_dir()
 
 local theme = {}
 
-theme.font          = "MononokiNerdFont Mono 12"
+theme.font          = "Ubuntu Mono 12"
 
 theme.bg_normal     = "#282a36"
 theme.bg_focus      = "#282a36"

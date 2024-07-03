@@ -12,6 +12,7 @@ import colors
 
 ##### VARIABLES #####
 mod = "mod4"              # Sets mod key to SUPER/WINDOWS
+mod1 = "control"		  # Defines the control key
 myTerm = "alacritty"      # My terminal of choice
 myBrowser = "librewolf"   # My browser of choice
 myEditor = "geany"		  # My text editor of choice
@@ -43,31 +44,32 @@ def maximize_by_switching_layout(qtile):
 keys = [
     # The essentials
     Key([mod], "Return", lazy.spawn(myTerm), desc='Terminal'),
-    Key([mod, "shift"], "Return", lazy.spawn("dmenu_run"), desc='Run Launcher'),
+    Key([mod,  "shift"], "Return", lazy.spawn("dmenu_run"), desc='Run Launcher'),
     #Key([mod, "shift"], "Return", lazy.spawn("rofi -show drun"), desc='Run Launcher'),
     Key([mod], "g", lazy.spawn(myEditor), desc='Text Editor'),
-    Key([mod], "w", lazy.spawn(myBrowser), desc='Web Browser'),
-    Key([mod, "shift"], "t", lazy.spawn("thunderbird"), desc='Email Client'),
+    Key([mod], "b", lazy.spawn(myBrowser), desc='Web Browser'),
+    Key([mod], "c", lazy.spawn(myEditor + " /home/aston/.config/qtile/config.py"), desc='My Qtile Config'),
     # Utilities
     Key([mod,  "shift"], "f", lazy.spawn("thunar"), desc='File Manager'),
     Key([mod], "r", lazy.spawn(myTerm + " -e ranger"), desc='Ranger File Manager'),
     Key([mod,  "shift"], "v", lazy.spawn("virt-manager"), desc='Virt-Manager'),
+    Key([mod,  "shift"], "t", lazy.spawn("thunderbird"), desc='Email Client'),
     Key([mod], "o", lazy.spawn("onlyoffice"), desc='Office Suite'),
     # Brightness control
-    Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl set +10%"), desc="Increase brightness by 10%"),
-    Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl set 10%-"), desc="Decrease brightness by 10%"),
+    Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl set +10%"), desc='Increase brightness by 10%'),
+    Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl set 10%-"), desc='Decrease brightness by 10%'),
     # Volume control
-    Key([mod], "F3", lazy.spawn("amixer set Master 5%+"), desc="Increase volume"),
-    Key([mod], "F2", lazy.spawn("amixer set Master 5%-"), desc="Decrease volume"),
-    Key([mod], "F4", lazy.spawn("amixer set Master toggle"), desc="Mute volume"),
-    Key([mod], "d", lazy.spawn("deadbeef"), desc='Music Player'),
-    Key([mod], "v", lazy.spawn("pavucontrol"), desc='Volume Control'),
+    Key([mod1], "F3", lazy.spawn("amixer set Master 5%+"), desc='Increase volume'),
+    Key([mod1], "F2", lazy.spawn("amixer set Master 5%-"), desc='Decrease volume'),
+    Key([mod1], "F4", lazy.spawn("amixer set Master toggle"), desc='Mute volume'),
+    Key([mod],  "d", lazy.spawn("deadbeef"), desc='Music Player'),
+    Key([mod],  "v", lazy.spawn("pavucontrol"), desc='Volume Control'),
     # Qtile 
-    Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
-    Key([mod, "shift"], "c", lazy.window.kill(), desc="Kill focused window"),
-    Key([mod], "q", lazy.window.kill(), desc="Kill focused window"),
-    Key([mod, "shift"], "r", lazy.reload_config(), desc="Reload the config"),
-    Key([mod, "shift"], "q", lazy.spawn("/home/aston/ro-scripts/sys_menu.sh"), desc="Logout menu"),
+    Key([mod], "Tab", lazy.next_layout(), desc='Toggle between layouts'),
+    Key([mod,  "shift"], "c", lazy.window.kill(), desc='Kill focused window'),
+    Key([mod], "q", lazy.window.kill(), desc='Kill focused window'),
+    Key([mod,  "shift"], "r", lazy.reload_config(), desc='Reload the config'),
+    Key([mod,  "shift"], "q", lazy.spawn("/home/aston/ro-scripts/sys_menu.sh"), desc='Logout menu'),
     
     # Switch between windows
     # Some layouts like 'monadtall' only need to use j/k to move
@@ -163,13 +165,12 @@ keys = [
 ]
 
 groups = []
-group_names = ["1", "2", "3", "4", "5", "6", "7", "8", "9",]
+group_names = ["1", "2", "3", "4", "5", "6",]
 
-group_labels = ["", "", "", "", "", "", "", "", "",]
-#group_labels = ["1", "2", "3", "4", "5", "6", "7", "8", "9",]
-#group_labels = ["DEV", "WWW", "SYS", "DOC", "VBOX", "CHAT", "MUS", "VID", "GFX",]
+group_labels = ["", "", "", "", "", "󰝚",]
+#group_labels = ["1", "2", "3", "4", "5", "6",]
 
-group_layouts = ["monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall"]
+group_layouts = ["monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall"]
 
 for i in range(len(group_names)):
     groups.append(
@@ -301,7 +302,7 @@ def init_widgets_list():
                  inactive = colors[1],
                  rounded = False,
                  highlight_color = colors[2],
-                 highlight_method = "line",
+                 highlight_method = "text",
                  this_current_screen_border = colors[7],
                  this_screen_border = colors [4],
                  other_current_screen_border = colors[7],
@@ -330,13 +331,10 @@ def init_widgets_list():
                  padding = 2,
                  fontsize = 14
                  ),
-        widget.Spacer(length = 8),
         widget.WindowName(
                  foreground = colors[6],
                  max_chars = 40
                  ),
-        widget.Systray(padding = 3),
-        widget.Spacer(length = 12),
         widget.GenPollText(
                  update_interval = 300,
                  func = lambda: subprocess.check_output("printf $(uname -r)", shell=True, text=True),
@@ -364,7 +362,7 @@ def init_widgets_list():
         widget.Memory(
                  foreground = colors[8],
                  mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(myTerm + ' -e htop')},
-                 format = '{MemUsed: .0f}{mm}',
+                 format = '{MemUsed: .0f}{mm} ({MemPercent:.0f}%)',
                  fmt = '🖥  Mem: {}',
                  decorations=[
                      BorderDecoration(
@@ -377,11 +375,11 @@ def init_widgets_list():
         widget.GenPollText(
                  update_interval = 60,
                  func=lambda: shorten_uptime(subprocess.check_output(["uptime", "-p"]).decode().strip()[3:]),
-                 foreground = colors[6],
+                 foreground = colors[7],
                  fmt = '   Uptime:  {}',
                  decorations=[
                      BorderDecoration(
-                         colour = colors[6],
+                         colour = colors[7],
                          border_width = [0, 0, 2, 0],
                      )
                  ],
@@ -408,9 +406,10 @@ def init_widgets_list():
                  foreground = colors[5],
                  partition = '/',
                  #format = '[{p}] {uf}{m} ({r:.0f}%)',
-                 format = '{uf}{m} free',
+                 format = '{uf}{m} ({r:.0f}%)',
                  fmt = '🖴  Disk: {}',
                  visible_on_warn = False,
+                 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn('Thunar')},
                  decorations=[
                      BorderDecoration(
                          colour = colors[5],
@@ -454,6 +453,8 @@ def init_widgets_list():
                  ],
                  ),
         widget.Spacer(length = 8),
+        widget.Systray(padding = 3),
+        widget.Spacer(length = 8),
 				 ]
     return widgets_list
 
@@ -468,9 +469,11 @@ def init_widgets_screen2():
     return widgets_screen2
 
 # For adding transparency to your bar, add (background="#00000000") to the "Screen" line(s)
-# For ex: Screen(top=bar.Bar(widgets=init_widgets_screen1(), background="#00000000", size=24)),
+# For ex: Screen(top=bar.Bar(widgets=init_widgets_screen1(), background="#00000000", size=26)),
 def init_screens():
-    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), size=24))]
+    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), size=26)),
+		    Screen(top=bar.Bar(widgets=init_widgets_screen2(), size=26)),
+		    Screen(top=bar.Bar(widgets=init_widgets_screen2(), size=26))]
 
 if __name__ in ["config", "__main__"]:
     screens = init_screens()
