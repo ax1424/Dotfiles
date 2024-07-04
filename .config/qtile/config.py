@@ -45,31 +45,30 @@ keys = [
     # The essentials
     Key([mod], "Return", lazy.spawn(myTerm), desc='Terminal'),
     Key([mod,  "shift"], "Return", lazy.spawn("dmenu_run"), desc='Run Launcher'),
-    #Key([mod, "shift"], "Return", lazy.spawn("rofi -show drun"), desc='Run Launcher'),
     Key([mod], "g", lazy.spawn(myEditor), desc='Text Editor'),
     Key([mod], "b", lazy.spawn(myBrowser), desc='Web Browser'),
     Key([mod], "c", lazy.spawn(myEditor + " /home/aston/.config/qtile/config.py"), desc='My Qtile Config'),
     # Utilities
     Key([mod,  "shift"], "f", lazy.spawn("thunar"), desc='File Manager'),
-    Key([mod], "r", lazy.spawn(myTerm + " -e ranger"), desc='Ranger File Manager'),
+    Key([mod], "r", lazy.spawn(myTerm + " -e ranger"), desc='Ranger Terminal File Manager'),
     Key([mod,  "shift"], "v", lazy.spawn("virt-manager"), desc='Virt-Manager'),
     Key([mod,  "shift"], "t", lazy.spawn("thunderbird"), desc='Email Client'),
     Key([mod], "o", lazy.spawn("onlyoffice"), desc='Office Suite'),
-    # Brightness control
+    # Brightness Control
     Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl set +10%"), desc='Increase brightness by 10%'),
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl set 10%-"), desc='Decrease brightness by 10%'),
-    # Volume control
+    # Audio Control & Utilities
     Key([mod1], "F3", lazy.spawn("amixer set Master 5%+"), desc='Increase volume'),
     Key([mod1], "F2", lazy.spawn("amixer set Master 5%-"), desc='Decrease volume'),
     Key([mod1], "F4", lazy.spawn("amixer set Master toggle"), desc='Mute volume'),
-    Key([mod],  "d", lazy.spawn("deadbeef"), desc='Music Player'),
-    Key([mod],  "v", lazy.spawn("pavucontrol"), desc='Volume Control'),
+    Key([mod],  "d",  lazy.spawn("deadbeef"), desc='Music Player'),
+    Key([mod],  "v",  lazy.spawn("pavucontrol"), desc='Volume Control'),
     # Qtile 
     Key([mod], "Tab", lazy.next_layout(), desc='Toggle between layouts'),
     Key([mod,  "shift"], "c", lazy.window.kill(), desc='Kill focused window'),
-    Key([mod], "q", lazy.window.kill(), desc='Kill focused window'),
+    Key([mod], 	 "q", 		  lazy.window.kill(), desc='Kill focused window'),
     Key([mod,  "shift"], "r", lazy.reload_config(), desc='Reload the config'),
-    Key([mod,  "shift"], "q", lazy.spawn("/home/aston/ro-scripts/sys_menu.sh"), desc='Logout menu'),
+    Key([mod,  "shift"], "q", lazy.spawn("dm-logout"), desc='Logout menu'),
     
     # Switch between windows
     # Some layouts like 'monadtall' only need to use j/k to move
@@ -159,8 +158,21 @@ keys = [
     #]),
     # Dmenu/rofi scripts launched using the key chord SUPER+p followed by 'key'
     KeyChord([mod], "p", [
+        Key([], "h", lazy.spawn("dm-hub"), desc='List all dmscripts'),
+        #Key([], "a", lazy.spawn("dm-sounds"), desc='Choose ambient sound'),
         Key([], "b", lazy.spawn("/home/aston/ro-scripts/wallpaper.sh"), desc='Set background'),
-        Key([], "q", lazy.spawn("/home/aston/ro-scripts/sys_menu.sh"), desc='Logout menu'),
+        #Key([], "c", lazy.spawn("dtos-colorscheme"), desc='Choose color scheme'),
+        Key([], "e", lazy.spawn("dm-confedit"), desc='Choose a config file to edit'),
+        #Key([], "i", lazy.spawn("dm-maim"), desc='Take a screenshot'),
+        Key([], "k", lazy.spawn("dm-kill"), desc='Kill processes '),
+        Key([], "m", lazy.spawn("dm-man"), desc='View manpages'),
+        #Key([], "n", lazy.spawn("dm-note"), desc='Store and copy notes'),
+        Key([], "o", lazy.spawn("dm-bookman"), desc='Browser bookmarks'),
+        #Key([], "p", lazy.spawn("rofi-pass"), desc='Logout menu'),
+        Key([], "q", lazy.spawn("dm-logout"), desc='Logout menu'),
+        #Key([], "r", lazy.spawn("dm-radio"), desc='Listen to online radio'),
+        Key([], "s", lazy.spawn("dm-websearch"), desc='Search various engines'),
+        Key([], "t", lazy.spawn("dm-translate"), desc='Translate text')
     ])
 ]
 
@@ -254,7 +266,7 @@ layouts = [
     #layout.Zoomy(**layout_theme),
 ]
 
-### Shorten the Uptime Output ###
+## Defining a Shorter Uptime Output
 def shorten_uptime(uptime_str):
     parts = uptime_str.split(', ')
     short_parts = []
@@ -406,7 +418,7 @@ def init_widgets_list():
                  foreground = colors[5],
                  partition = '/',
                  #format = '[{p}] {uf}{m} ({r:.0f}%)',
-                 format = '{uf}{m} ({r:.0f}%)',
+                 format = '{uf}{m} free',
                  fmt = '🖴  Disk: {}',
                  visible_on_warn = False,
                  mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn('Thunar')},
@@ -455,7 +467,7 @@ def init_widgets_list():
         widget.Spacer(length = 8),
         widget.Systray(padding = 3),
         widget.Spacer(length = 8),
-				 ]
+	    ]
     return widgets_list
 
 def init_widgets_screen1():
