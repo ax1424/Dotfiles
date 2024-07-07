@@ -12,7 +12,7 @@ import colors
 
 ##### VARIABLES #####
 mod = "mod4"              # Sets mod key to SUPER/WINDOWS
-mod1 = "control"		  # Defines the control key
+ctrl = "control"		  # Defines ctrl as Control Key
 myTerm = "alacritty"      # My terminal of choice
 myBrowser = "librewolf"   # My browser of choice
 myEditor = "geany"		  # My text editor of choice
@@ -44,25 +44,27 @@ def maximize_by_switching_layout(qtile):
 keys = [
     # The essentials
     Key([mod], "Return", lazy.spawn(myTerm), desc='Terminal'),
-    Key([mod,  "shift"], "Return", lazy.spawn("dmenu_run"), desc='Run Launcher'),
+    Key([mod,  "shift"], "Return", lazy.spawn("dmenu_run -p ' Run: '"), desc='Run Launcher'),
     Key([mod], "g", lazy.spawn(myEditor), desc='Text Editor'),
     Key([mod], "b", lazy.spawn(myBrowser), desc='Web Browser'),
-    Key([mod], "c", lazy.spawn(myEditor + " /home/aston/.config/qtile/config.py"), desc='My Qtile Config'),
+    Key([mod], "c", lazy.spawn(myEditor + " /home/aston/.config/qtile/config.py"), desc='Open My Qtile Config'),
+    
     # Utilities
     Key([mod,  "shift"], "f", lazy.spawn("thunar"), desc='File Manager'),
-    Key([mod], "r", lazy.spawn(myTerm + " -e ranger"), desc='Ranger Terminal File Manager'),
+    Key([mod], "r", lazy.spawn(myTerm + " -e ranger"), desc='Ranger File Manager'),
     Key([mod,  "shift"], "v", lazy.spawn("virt-manager"), desc='Virt-Manager'),
     Key([mod,  "shift"], "t", lazy.spawn("thunderbird"), desc='Email Client'),
-    Key([mod], "o", lazy.spawn("onlyoffice"), desc='Office Suite'),
+    
     # Brightness Control
     Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl set +10%"), desc='Increase brightness by 10%'),
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl set 10%-"), desc='Decrease brightness by 10%'),
+    
     # Audio Control & Utilities
-    Key([mod1], "F3", lazy.spawn("amixer set Master 5%+"), desc='Increase volume'),
-    Key([mod1], "F2", lazy.spawn("amixer set Master 5%-"), desc='Decrease volume'),
-    Key([mod1], "F4", lazy.spawn("amixer set Master toggle"), desc='Mute volume'),
-    Key([mod],  "d",  lazy.spawn("deadbeef"), desc='Music Player'),
+    Key([ctrl], "F3", lazy.spawn("amixer set Master 5%+"), desc='Increase volume'),
+    Key([ctrl], "F2", lazy.spawn("amixer set Master 5%-"), desc='Decrease volume'),
+    Key([ctrl], "F4", lazy.spawn("amixer set Master toggle"), desc='Mute volume'),
     Key([mod],  "v",  lazy.spawn("pavucontrol"), desc='Volume Control'),
+    
     # Qtile 
     Key([mod], "Tab", lazy.next_layout(), desc='Toggle between layouts'),
     Key([mod,  "shift"], "c", lazy.window.kill(), desc='Kill focused window'),
@@ -281,7 +283,7 @@ def shorten_uptime(uptime_str):
         elif part.endswith(' minute'):
             short_parts.append(part.replace(' minute', 'm'))
         else:
-            short_parts.append(part)  # keep other parts unchanged
+            short_parts.append(part)  
 
     return ', '.join(short_parts)
 
@@ -305,8 +307,8 @@ def init_widgets_list():
                  ),
         widget.GroupBox(
                  fontsize = 14,
-                 margin_y = 5,
-                 margin_x = 5,
+                 margin_y = 3,
+                 margin_x = 3,
                  padding_y = 5,
                  padding_x = 5,
                  borderwidth = 3,
@@ -320,12 +322,10 @@ def init_widgets_list():
                  other_current_screen_border = colors[7],
                  other_screen_border = colors[4],
                  ),
-        widget.TextBox(
-                 text = '|',
-                 font = "Ubuntu Mono",
+        widget.Sep(
                  foreground = colors[1],
-                 padding = 2,
-                 fontsize = 14
+                 padding = 10,
+                 size_percent = 50
                  ),
         widget.CurrentLayoutIcon(
                  foreground = colors[1],
@@ -336,15 +336,14 @@ def init_widgets_list():
                  foreground = colors[1],
                  padding = 5
                  ),
-        widget.TextBox(
-                 text = '|',
-                 font = "Ubuntu Mono",
+        widget.Sep(
                  foreground = colors[1],
-                 padding = 2,
-                 fontsize = 14
+                 padding = 10,
+                 size_percent = 50
                  ),
         widget.WindowName(
                  foreground = colors[6],
+                 padding = 2,
                  max_chars = 40
                  ),
         widget.GenPollText(
@@ -563,11 +562,11 @@ auto_minimize = True
 # When using the Wayland backend, this can be used to configure input devices.
 wl_input_rules = None
 
-##### AUTOSTART #####
+##### AUTOSTART PROGRAMS #####
 @hook.subscribe.startup_once
 def start_once():
     home = os.path.expanduser('~')
     subprocess.call([home + '/.config/qtile/autostart.sh'])
     
-##### WMNAME #####
+##### JAVA APPS MIGHT NEED THIS #####
 wmname = "LG3D"
