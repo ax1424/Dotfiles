@@ -12,11 +12,10 @@ import colors
 
 ##### VARIABLES #####
 mod = "mod4"              # Sets mod key to SUPER/WINDOWS
-ctrl = "control"		  # Defines ctrl as Control Key
+ctrl = "control"		  # Defines control key as ctrl
 myTerm = "alacritty"      # My terminal of choice
 myBrowser = "librewolf"   # My browser of choice
 myEditor = "geany"		  # My text editor of choice
-#myEmacs = "emacsclient -c -a 'emacs' " # The space at the end is IMPORTANT!
 
 # Allows you to input a name when adding treetab section.
 @lazy.layout.function
@@ -44,13 +43,13 @@ def maximize_by_switching_layout(qtile):
 keys = [
     # The essentials
     Key([mod], "Return", lazy.spawn(myTerm), desc='Terminal'),
-    Key([mod,  "shift"], "Return", lazy.spawn("dmenu_run -p ' Run: '"), desc='Run Launcher'),
+    Key([mod,  "shift"], "Return", lazy.spawn("dmenu_run -l 10 -p ' Run: '"), desc='Run Launcher'),
     Key([mod], "g", lazy.spawn(myEditor), desc='Text Editor'),
     Key([mod], "b", lazy.spawn(myBrowser), desc='Web Browser'),
     Key([mod], "c", lazy.spawn(myEditor + " /home/aston/.config/qtile/config.py"), desc='Open My Qtile Config'),
     
     # Utilities
-    Key([mod,  "shift"], "f", lazy.spawn("thunar"), desc='File Manager'),
+    Key([mod,  "shift"], "f", lazy.spawn("pcmanfm"), desc='File Manager'),
     Key([mod], "r", lazy.spawn(myTerm + " -e ranger"), desc='Ranger File Manager'),
     Key([mod,  "shift"], "v", lazy.spawn("virt-manager"), desc='Virt-Manager'),
     Key([mod,  "shift"], "t", lazy.spawn("thunderbird"), desc='Email Client'),
@@ -67,8 +66,7 @@ keys = [
     
     # Qtile 
     Key([mod], "Tab", lazy.next_layout(), desc='Toggle between layouts'),
-    Key([mod,  "shift"], "c", lazy.window.kill(), desc='Kill focused window'),
-    Key([mod], 	 "q", 		  lazy.window.kill(), desc='Kill focused window'),
+    Key([mod], 	 "q", 	lazy.window.kill(), desc='Kill focused window'),
     Key([mod,  "shift"], "r", lazy.reload_config(), desc='Reload the config'),
     Key([mod,  "shift"], "q", lazy.spawn("dm-logout"), desc='Logout menu'),
     
@@ -144,20 +142,6 @@ keys = [
     Key([mod], "period", lazy.next_screen(), desc='Move focus to next monitor'),
     Key([mod], "comma", lazy.prev_screen(), desc='Move focus to prev monitor'),
     
-     #Emacs programs launched using the key chord CTRL+e followed by 'key'
-    #KeyChord([mod],"e", [
-        #Key([], "e", lazy.spawn(myEmacs), desc='Emacs Dashboard'),
-        #Key([], "a", lazy.spawn(myEmacs + "--eval '(emms-play-directory-tree \"~/Music/\")'"), desc='Emacs EMMS'),
-        #Key([], "b", lazy.spawn(myEmacs + "--eval '(ibuffer)'"), desc='Emacs Ibuffer'),
-        #Key([], "d", lazy.spawn(myEmacs + "--eval '(dired nil)'"), desc='Emacs Dired'),
-        #Key([], "i", lazy.spawn(myEmacs + "--eval '(erc)'"), desc='Emacs ERC'),
-        #Key([], "s", lazy.spawn(myEmacs + "--eval '(eshell)'"), desc='Emacs Eshell'),
-        #Key([], "v", lazy.spawn(myEmacs + "--eval '(vterm)'"), desc='Emacs Vterm'),
-        #Key([], "w", lazy.spawn(myEmacs + "--eval '(eww \"distro.tube\")'"), desc='Emacs EWW'),
-        #Key([], "F4", lazy.spawn("killall emacs"),
-                      #lazy.spawn("/usr/bin/emacs --daemon"),
-                      #desc='Kill/restart the Emacs daemon')
-    #]),
     # Dmenu/rofi scripts launched using the key chord SUPER+p followed by 'key'
     KeyChord([mod], "p", [
         Key([], "h", lazy.spawn("dm-hub"), desc='List all dmscripts'),
@@ -338,12 +322,12 @@ def init_widgets_list():
                  ),
         widget.Sep(
                  foreground = colors[1],
-                 padding = 10,
+                 padding = 8,
                  size_percent = 50
                  ),
         widget.WindowName(
                  foreground = colors[6],
-                 padding = 2,
+                 padding = 3,
                  max_chars = 40
                  ),
         widget.GenPollText(
@@ -420,7 +404,7 @@ def init_widgets_list():
                  format = '{uf}{m} free',
                  fmt = '🖴  Disk: {}',
                  visible_on_warn = False,
-                 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn('Thunar')},
+                 mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn('pcmanfm')},
                  decorations=[
                      BorderDecoration(
                          colour = colors[5],

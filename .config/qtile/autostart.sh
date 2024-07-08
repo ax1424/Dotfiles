@@ -11,8 +11,8 @@ redshift &
 volumeicon & 
 xfce4-power-manager &
 
-### WALLPAPER (UNCOMMENT ONLY ONE OF THE TWO OPTIONS!) ###
-#Restore the Last Wallpaper
+### UNCOMMENT ONLY ONE OF THE TWO OPTIONS! ###
+#1.Restore the Last Wallpaper
 nitrogen --restore & 
-#Get a Random Wallpaper
+#2.Get a Random Wallpaper
 #nitrogen --set-zoom-fill --random ~/wallpapers & 
