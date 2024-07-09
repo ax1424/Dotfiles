@@ -17,6 +17,7 @@ myTerm = "alacritty"      # My terminal of choice
 myBrowser = "librewolf"   # My browser of choice
 myEditor = "geany"		  # My text editor of choice
 
+##### CUSTOM FUNCTIONS #####
 # Allows you to input a name when adding treetab section.
 @lazy.layout.function
 def add_treetab_section(layout):
@@ -162,6 +163,7 @@ keys = [
     ])
 ]
 
+##### GROUPS #####
 groups = []
 group_names = ["1", "2", "3", "4", "5", "6",]
 
@@ -198,16 +200,17 @@ for i in groups:
         ]
     )
 
-##### COLORS #####
+##### COLORSCHEME #####
 colors = colors.DoomOne
 
-##### LAYOUTS #####
+##### DEFAULT SETTINGS FOR ALL LAYOUTS #####
 layout_theme = {"border_width": 2,
                 "margin": 8,
                 "border_focus": colors[8],
                 "border_normal": colors[0]
                 }
 
+##### LAYOUTS #####
 layouts = [
     #layout.Bsp(**layout_theme),
     #layout.Floating(**layout_theme)
@@ -252,7 +255,7 @@ layouts = [
     #layout.Zoomy(**layout_theme),
 ]
 
-## Defining a Shorter Uptime Output
+##### DEFINES A SHORTER UPTIME OUTPUT #####
 def shorten_uptime(uptime_str):
     parts = uptime_str.split(', ')
     short_parts = []
@@ -271,7 +274,6 @@ def shorten_uptime(uptime_str):
 
     return ', '.join(short_parts)
 
-##### WIDGETS #####
 widget_defaults = dict(
     font="Ubuntu Bold",
     fontsize = 14,
@@ -281,6 +283,7 @@ widget_defaults = dict(
 
 extension_defaults = widget_defaults.copy()
 
+##### WIDGETS #####
 def init_widgets_list():
     widgets_list = [
         widget.Spacer(length = 8),
@@ -357,7 +360,8 @@ def init_widgets_list():
         widget.Memory(
                  foreground = colors[8],
                  mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(myTerm + ' -e htop')},
-                 format = '{MemUsed: .0f}{mm} ({MemPercent:.0f}%)',
+                 #format = '{MemUsed: .0f}{mm} ({MemPercent:.0f}%)',
+                 format = '{MemUsed: .0f}{mm}',
                  fmt = '🖥  Mem: {}',
                  decorations=[
                      BorderDecoration(
@@ -453,14 +457,15 @@ def init_widgets_list():
 	    ]
     return widgets_list
 
+##### SCREENS #####
 def init_widgets_screen1():
     widgets_screen1 = init_widgets_list()
     return widgets_screen1 
 
-# All other monitors' bars will display everything but widgets 22 (systray) and 23 (spacer).
+# All other monitors' bars will display everything but widgets 26 (systray) and 27 (spacer).
 def init_widgets_screen2():
     widgets_screen2 = init_widgets_list()
-    del widgets_screen2[22:24]
+    del widgets_screen2[26:28]
     return widgets_screen2
 
 # For adding transparency to your bar, add (background="#00000000") to the "Screen" line(s)
@@ -476,6 +481,7 @@ if __name__ in ["config", "__main__"]:
     widgets_screen1 = init_widgets_screen1()
     widgets_screen2 = init_widgets_screen2()
 
+##### SOME IMPORTANT FUNCTIONS #####
 def window_to_prev_group(qtile):
     if qtile.currentWindow is not None:
         i = qtile.groups.index(qtile.currentGroup)
@@ -503,12 +509,14 @@ def switch_screens(qtile):
     group = qtile.screens[i - 1].group
     qtile.current_screen.set_group(group)
 
+##### DRAG FLOATING LAYOUTS #####
 mouse = [
     Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
     Drag([mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()),
     Click([mod], "Button2", lazy.window.bring_to_front()),
 ]
 
+##### WINDOW RULES #####
 dgroups_key_binder = None
 dgroups_app_rules = []  # type: list
 follow_mouse_focus = True
@@ -532,7 +540,7 @@ floating_layout = layout.Floating(
         Match(wm_class="toolbar"),        # toolbars
         Match(wm_class="Yad"),            # yad boxes
         Match(title="branchdialog"),      # gitk
-        Match(title='galculator'),        # galculator
+        Match(title='Qalculate!'),        # qalculate!-gtk
     ]
 )
 auto_fullscreen = True
